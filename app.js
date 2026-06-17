@@ -127,6 +127,7 @@ function primeiroNome(nomeCompleto) {
    DASHBOARD
    ============================================================ */
 function renderDashboard() {
+  renderCompartilhar();
   const visiveis = alunasVisiveis();
   const total = visiveis.length;
   const ativas = visiveis.filter(function (a) { return gestaoDe(a).status !== 'Inativo'; }).length;
@@ -206,6 +207,48 @@ function renderDashboard() {
       }).join('')
     : '<div class="alert-empty">Nenhuma atividade registrada ainda.</div>';
 }
+
+/* ============================================================
+   COMPARTILHAR COM NOVAS ALUNAS (atalho no Dashboard)
+   ============================================================ */
+function renderCompartilhar() {
+  document.getElementById('textoApresentarFicha').value = CONFIG.modelosWhatsapp.apresentarFicha || '';
+  document.getElementById('textoApresentarFotos').value = CONFIG.modelosWhatsapp.apresentarGuiaFotos || '';
+}
+
+function copiarParaAreaDeTransferencia(texto, callback) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(texto).then(callback).catch(function () { copiaAlternativa(texto, callback); });
+  } else {
+    copiaAlternativa(texto, callback);
+  }
+}
+function copiaAlternativa(texto, callback) {
+  const ta = document.createElement('textarea');
+  ta.value = texto;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+  if (callback) callback();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('btnCopiarFicha').addEventListener('click', function () {
+    CONFIG.modelosWhatsapp.apresentarFicha = document.getElementById('textoApresentarFicha').value;
+    salvarConfig(CONFIG);
+    const texto = CONFIG.modelosWhatsapp.apresentarFicha + CONFIG.linkFicha;
+    copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto da ficha copiado!'); });
+  });
+  document.getElementById('btnCopiarFotos').addEventListener('click', function () {
+    CONFIG.modelosWhatsapp.apresentarGuiaFotos = document.getElementById('textoApresentarFotos').value;
+    salvarConfig(CONFIG);
+    const texto = CONFIG.modelosWhatsapp.apresentarGuiaFotos + CONFIG.linkGuiaFotos;
+    copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do guia de fotos copiado!'); });
+  });
+});
 
 /* ============================================================
    GESTÃO DE ALUNAS
@@ -371,16 +414,32 @@ function renderTabEvolucao(a) {
     '</tbody></table>';
 }
 
+function extrairIdDrive(url) {
+  if (!url || url === '—') return null;
+  const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+function miniaturaDrive(url) {
+  const id = extrairIdDrive(url);
+  return id ? 'https://lh3.googleusercontent.com/d/' + id + '=s400' : null;
+}
+
 function renderTabFotos(a) {
   const el = document.getElementById('tab-fotos');
   const lista = (a.fotos || []).slice().sort(function (x, y) { return new Date(y['Data/Hora']) - new Date(x['Data/Hora']); });
   if (!lista.length) { el.innerHTML = '<p style="color:var(--ink-soft);">Nenhuma foto enviada ainda.</p>'; return; }
   el.innerHTML = '<div class="fotos-grid">' + lista.map(function (f) {
-    let links = '';
-    if (f['Foto Frente'] && f['Foto Frente'] !== '—') links += '<a href="' + f['Foto Frente'] + '" target="_blank">Frente</a>';
-    if (f['Foto Perfil'] && f['Foto Perfil'] !== '—') links += '<a href="' + f['Foto Perfil'] + '" target="_blank">Perfil</a>';
-    if (f['Foto Costas'] && f['Foto Costas'] !== '—') links += '<a href="' + f['Foto Costas'] + '" target="_blank">Costas</a>';
-    return '<div><div class="data-foto">' + formatarData(f['Data/Hora']) + '</div>' + links + '</div>';
+    let imgs = '';
+    [['Foto Frente', 'Frente'], ['Foto Perfil', 'Perfil'], ['Foto Costas', 'Costas']].forEach(function (par) {
+      const urlOriginal = f[par[0]];
+      const thumb = miniaturaDrive(urlOriginal);
+      if (!thumb) return;
+      imgs += '<a href="' + urlOriginal + '" target="_blank" class="foto-thumb">' +
+        '<img src="' + thumb + '" alt="' + par[1] + '" loading="lazy">' +
+        '<span>' + par[1] + '</span>' +
+      '</a>';
+    });
+    return '<div class="foto-data-bloco"><div class="data-foto">' + formatarData(f['Data/Hora']) + '</div><div class="foto-thumbs-row">' + (imgs || '<span style="color:var(--ink-soft); font-size:.78rem;">Sem imagem visível (enviada antes do ajuste de compartilhamento)</span>') + '</div></div>';
   }).join('') + '</div>';
 }
 

@@ -196,9 +196,13 @@ table.data-table tr:hover td{ background:#FAFAF9; }
 .toast{ position:fixed; bottom:1.6rem; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); color:#fff; padding:.7rem 1.3rem; border-radius:999px; font-size:.85rem; opacity:0; transition:all .25s ease; pointer-events:none; z-index:80; }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-.fotos-grid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap:.8rem; }
-.fotos-grid .data-foto{ font-size:.74rem; color:var(--ink-soft); margin-bottom:.4rem; font-weight:600; }
-.fotos-grid a{ display:block; padding:.5rem .7rem; border:1px solid var(--line); border-radius:var(--radius-sm); font-size:.8rem; margin-bottom:.3rem; text-align:center; }
+.fotos-grid{ display:flex; flex-direction:column; gap:1.2rem; }
+.foto-data-bloco .data-foto{ font-size:.78rem; color:var(--ink-soft); margin-bottom:.5rem; font-weight:600; }
+.foto-thumbs-row{ display:flex; gap:.8rem; flex-wrap:wrap; }
+.foto-thumb{ display:block; width:120px; text-align:center; color:var(--ink); }
+.foto-thumb img{ width:120px; height:150px; object-fit:cover; border-radius:var(--radius-sm); border:1px solid var(--line); display:block; background:#F0F0EF; }
+.foto-thumb span{ display:block; font-size:.72rem; color:var(--ink-soft); margin-top:.3rem; font-weight:600; }
+.foto-thumb:hover img{ opacity:.85; }
 
 /* ---------- RESPONSIVO ---------- */
 @media (max-width: 980px){

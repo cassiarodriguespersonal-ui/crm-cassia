@@ -17,10 +17,10 @@ const CONFIG_PADRAO = {
   meuEmail: "cassiarodriguespersonal@gmail.com",
   meuNome: "Cássia Rodrigues",
 
-  // Links das páginas que as alunas usam (hospedadas separadamente).
-  linkFicha: "https://cadastro-aluno-novo.netlify.app/",
-  linkGuiaFotos: "https://guia-de-fotos.netlify.app/",
-  linkCheckin: "", // preencha quando publicar o check-in semanal
+  // Links das páginas que as alunas usam (hospedadas no mesmo repositório do GitHub).
+  linkFicha: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/anamnese.html",
+  linkGuiaFotos: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/fotos.html",
+  linkCheckin: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/checkin.html",
 
   // Após quantos dias sem check-in o Dashboard deve alertar.
   diasAlertaCheckin: 7,
@@ -30,6 +30,8 @@ const CONFIG_PADRAO = {
 
   // Modelos de mensagem — use {nome} para o nome da aluna.
   modelosWhatsapp: {
+    apresentarFicha: "Oi! Antes da nossa primeira sessão, preciso que você preencha sua ficha de avaliação. Leva uns 12 a 15 minutos: ",
+    apresentarGuiaFotos: "Oi! Para completar sua avaliação, preencha o guia rápido de fotos de progresso: ",
     boasVindas: "Oi, {nome}! Que bom ter você como aluna. Estou à disposição para qualquer dúvida nessa fase inicial. Vamos juntas! 💪",
     lembreteSemanal: "Oi, {nome}! Passando para saber como foi sua semana de treino. Pode me contar por aqui ou preencher o check-in: " ,
     solicitarCheckin: "Oi, {nome}! Está na hora do seu check-in semanal. Leva menos de um minuto: ",
