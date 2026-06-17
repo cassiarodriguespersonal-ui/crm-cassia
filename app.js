@@ -60,6 +60,11 @@ function mostrarSecao(nome) {
 
 function ligarTopbar() {
   document.getElementById('btnAtualizar').addEventListener('click', carregarDados);
+  document.getElementById('btnLimparAlertas').addEventListener('click', function () {
+    localStorage.setItem('crm_alertas_limpos_em', new Date().toDateString());
+    renderDashboard();
+    mostrarToast('Alertas limpos por hoje.');
+  });
 }
 
 /* ---------- CARREGAMENTO DE DADOS ---------- */
@@ -182,9 +187,16 @@ function renderDashboard() {
   });
 
   const elAlertas = document.getElementById('dashboardAlertas');
-  elAlertas.innerHTML = alertas.length
-    ? alertas.slice(0, 20).map(function (a) { return '<div class="alert-item">' + a + '</div>'; }).join('')
-    : '<div class="alert-empty">Nenhum alerta agora. Tudo em dia! ✅</div>';
+  const hoje = new Date().toDateString();
+  const limpoEm = localStorage.getItem('crm_alertas_limpos_em');
+
+  if (limpoEm === hoje) {
+    elAlertas.innerHTML = '<div class="alert-empty">Você já limpou os alertas de hoje. Eles voltam a aparecer amanhã, se ainda forem válidos. ✅</div>';
+  } else if (alertas.length) {
+    elAlertas.innerHTML = alertas.slice(0, 20).map(function (a) { return '<div class="alert-item">' + a + '</div>'; }).join('');
+  } else {
+    elAlertas.innerHTML = '<div class="alert-empty">Nenhum alerta agora. Tudo em dia! ✅</div>';
+  }
 
   // Últimas atividades (fichas + check-ins combinados)
   const atividades = [];
@@ -214,6 +226,7 @@ function renderDashboard() {
 function renderCompartilhar() {
   document.getElementById('textoApresentarFicha').value = CONFIG.modelosWhatsapp.apresentarFicha || '';
   document.getElementById('textoApresentarFotos').value = CONFIG.modelosWhatsapp.apresentarGuiaFotos || '';
+  document.getElementById('textoApresentarCheckin').value = CONFIG.modelosWhatsapp.apresentarCheckin || '';
 }
 
 function copiarParaAreaDeTransferencia(texto, callback) {
@@ -247,6 +260,12 @@ document.addEventListener('DOMContentLoaded', function () {
     salvarConfig(CONFIG);
     const texto = CONFIG.modelosWhatsapp.apresentarGuiaFotos + CONFIG.linkGuiaFotos;
     copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do guia de fotos copiado!'); });
+  });
+  document.getElementById('btnCopiarCheckin').addEventListener('click', function () {
+    CONFIG.modelosWhatsapp.apresentarCheckin = document.getElementById('textoApresentarCheckin').value;
+    salvarConfig(CONFIG);
+    const texto = CONFIG.modelosWhatsapp.apresentarCheckin + CONFIG.linkCheckin;
+    copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do check-in copiado!'); });
   });
 });
 
