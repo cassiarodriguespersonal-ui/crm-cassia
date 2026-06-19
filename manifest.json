@@ -1,0 +1,32 @@
+{
+  "name": "CRM — Cássia Rodrigues Personal Trainer",
+  "short_name": "CRM Cássia",
+  "description": "Sistema de gestão de alunas, check-ins, financeiro e ferramentas — Cássia Rodrigues Personal Trainer",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F7F4F2",
+  "theme_color": "#7C1B2A",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
