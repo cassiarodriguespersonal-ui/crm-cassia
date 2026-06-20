@@ -108,10 +108,20 @@ button{ font-family: inherit; }
 /* ---------- CARDS / GRID ---------- */
 .stat-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap:1rem; margin-bottom: 1.8rem; }
 .stat-card{
+  position:relative; overflow:hidden;
   background:var(--paper); border:1px solid var(--line); border-radius:var(--radius-sm);
-  padding:1.2rem 1.3rem; box-shadow: var(--shadow-sm);
+  padding:1.2rem 1.3rem 1.2rem 1.5rem; box-shadow: var(--shadow-sm);
   transition: transform .15s var(--ease), box-shadow .15s var(--ease);
 }
+.stat-card::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:var(--ink-faint);
+}
+.stat-card.tom-bom::before{ background:var(--ok); }
+.stat-card.tom-atencao::before{ background:var(--alert); }
+.stat-card.tom-risco::before{ background:var(--danger); }
+.stat-card.tom-risco .num{ color:var(--danger); }
+.stat-card .stat-icon{ position:absolute; top:.9rem; right:.95rem; font-size:1.05rem; opacity:.5; }
 .stat-card:hover{ transform: translateY(-2px); box-shadow: var(--shadow); }
 .stat-card .num{ font-family:'Fraunces',serif; font-size:1.85rem; font-weight:700; color:var(--ink); line-height:1; }
 .stat-card .lbl{ font-size:.78rem; color:var(--ink-soft); margin-top:.3rem; }
@@ -290,7 +300,7 @@ table.data-table tr:hover td{ background:#FAFAF8; }
    ============================================================ */
 .greeting-card{
   display:flex; align-items:center; gap:1rem;
-  background: var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  background: linear-gradient(135deg, var(--paper) 0%, var(--paper-soft) 100%); border:1px solid var(--line); border-radius:var(--radius);
   padding:1.2rem 1.4rem; margin-bottom:1.4rem; box-shadow:var(--shadow-sm);
 }
 .greeting-avatar{ width:48px; height:48px; border-radius:50%; background:var(--ink); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
@@ -324,11 +334,17 @@ table.data-table tr:hover td{ background:#FAFAF8; }
 .care-list{ display:flex; flex-direction:column; gap:.7rem; }
 .care-card{
   display:flex; align-items:center; gap:1rem; padding:.9rem 1.1rem;
-  border:1px solid var(--line); border-radius:var(--radius-sm); background:var(--paper);
+  border:1px solid var(--line); border-left:4px solid var(--ink-faint); border-radius:var(--radius-sm); background:var(--paper);
   transition: box-shadow .15s var(--ease);
 }
 .care-card:hover{ box-shadow:var(--shadow-sm); }
-.care-card.urgente{ border-color: var(--danger-soft); background: var(--danger-soft); }
+.care-card.urgente{ border-color: var(--danger-soft); border-left-color:var(--danger); background: var(--danger-soft); }
+/* Mesma escala de 4 níveis do Score de Risco (calcularRisco), pra cor lateral
+   refletir gravidade real e não só o binário urgente sim/não */
+.care-card.nivel-excelente{ border-left-color: var(--ok); }
+.care-card.nivel-atencao{ border-left-color: var(--alert); }
+.care-card.nivel-em_risco{ border-left-color: var(--alert); background: var(--alert-soft); }
+.care-card.nivel-critico{ border-color: var(--danger-soft); border-left-color: var(--danger); background: var(--danger-soft); }
 .care-card .info{ flex:1; min-width:0; }
 .care-card .nome{ font-family:'Fraunces',serif; font-weight:600; font-size:.96rem; }
 .care-card .sinais{ display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.4rem; }
@@ -336,6 +352,18 @@ table.data-table tr:hover td{ background:#FAFAF8; }
 .care-chip.risco{ background:var(--danger-soft); color:var(--danger); font-weight:600; }
 .care-card .acao{ flex-shrink:0; }
 .care-empty{ text-align:center; padding:1.6rem 0; color:var(--ink-soft); font-size:.86rem; }
+
+/* Central de Tarefas: linhas mais compactas, ícone em selo redondo */
+#dashboardTarefas .care-card{ padding:.55rem .85rem; border-left-width:3px; }
+#dashboardTarefas .care-card .info label{ display:flex; align-items:center; gap:.5rem; font-size:.85rem; cursor:pointer; }
+#dashboardTarefas .care-card .icone-tarefa{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:1.6rem; height:1.6rem; border-radius:50%; background:var(--paper-soft);
+  font-size:.85rem; flex-shrink:0;
+}
+
+/* Aniversariantes: identidade própria (dourado), separada da escala de risco */
+#dashboardAniversariantes .care-card{ border-left-color:#D9A441; }
 
 /* ---------- BARRA INFERIOR (mobile) ---------- */
 .bottom-nav{ display:none; }
