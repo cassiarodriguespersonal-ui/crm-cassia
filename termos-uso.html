@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Termos de Uso e Política de Privacidade — Consultoria Cássia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --preto:#1A1714;
+    --branco:#FFFFFF;
+    --cinza:#F7F4F2;
+    --bordo:#7C1B2A;
+    --bordo-suave:#F4E7E9;
+    --bordo-linha:#E7D4D7;
+    --texto-sec:rgba(26,23,20,.62);
+    --texto-terc:rgba(26,23,20,.42);
+    --borda:rgba(26,23,20,.10);
+    --serif:'Fraunces',serif;
+    --sans:'Inter',sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    font-family:var(--sans);
+    background:var(--cinza);
+    color:var(--preto);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  ::selection{background:var(--bordo);color:var(--branco);}
+
+  a{color:var(--bordo);}
+
+  /* ===== TOPO ===== */
+  .topo{
+    background:var(--preto);
+    color:var(--branco);
+    padding:56px 24px 64px;
+    position:relative;
+    overflow:hidden;
+  }
+  .topo::after{
+    content:'';
+    position:absolute;
+    right:-80px; top:-80px;
+    width:280px; height:280px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(124,27,42,.55), transparent 70%);
+    pointer-events:none;
+  }
+  .topo-inner{
+    max-width:880px;
+    margin:0 auto;
+    position:relative;
+    z-index:1;
+  }
+  .marca{
+    font-family:var(--serif);
+    font-size:15px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--bordo);
+    font-weight:600;
+    margin-bottom:28px;
+  }
+  .marca span{color:rgba(255,255,255,.55); font-weight:400; text-transform:none; letter-spacing:0; font-family:var(--sans);}
+  .topo h1{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:clamp(30px,5vw,46px);
+    line-height:1.12;
+    letter-spacing:-.01em;
+    max-width:680px;
+  }
+  .topo-meta{
+    margin-top:24px;
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:rgba(255,255,255,.55);
+    letter-spacing:.02em;
+  }
+  .topo-meta b{color:rgba(255,255,255,.85); font-weight:500;}
+
+  .topo-intro{
+    margin-top:30px;
+    max-width:620px;
+    font-size:15.5px;
+    line-height:1.7;
+    color:rgba(255,255,255,.78);
+  }
+
+  /* ===== LAYOUT PRINCIPAL ===== */
+  .layout{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px 100px;
+    display:grid;
+    grid-template-columns:230px 1fr;
+    gap:56px;
+    align-items:start;
+  }
+
+  /* ===== SUMÁRIO (TOC) ===== */
+  .toc-wrap{
+    position:sticky;
+    top:24px;
+    align-self:start;
+  }
+  .toc-label{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--texto-terc);
+    margin:32px 0 12px;
+  }
+  .toc-list{list-style:none;}
+  .toc-list li{margin-bottom:2px;}
+  .toc-list a{
+    display:block;
+    text-decoration:none;
+    color:var(--texto-sec);
+    font-size:13.5px;
+    padding:7px 10px;
+    border-radius:6px;
+    border-left:2px solid transparent;
+    transition:all .15s ease;
+    line-height:1.4;
+  }
+  .toc-list a:hover{background:var(--bordo-suave); color:var(--bordo);}
+  .toc-list a.ativo{
+    color:var(--bordo);
+    border-left-color:var(--bordo);
+    font-weight:600;
+    background:var(--bordo-suave);
+  }
+  .toc-num{font-family:var(--mono); font-size:11px; color:var(--texto-terc); margin-right:6px;}
+
+  .toc-mobile-toggle{display:none;}
+
+  /* ===== DOCUMENTO ===== */
+  .doc{
+    background:var(--branco);
+    border-radius:18px;
+    border:1px solid var(--borda);
+    margin-top:-40px;
+    box-shadow:0 24px 60px -30px rgba(26,23,20,.18);
+  }
+
+  .intro-humana{
+    padding:40px 48px 32px;
+    border-bottom:1px solid var(--borda);
+  }
+  .intro-humana p{
+    font-size:16.5px;
+    line-height:1.75;
+    color:var(--preto);
+    max-width:620px;
+  }
+  .intro-humana p + p{margin-top:14px;}
+  .assinatura-intro{
+    margin-top:20px;
+    font-family:var(--serif);
+    font-style:italic;
+    color:var(--bordo);
+    font-size:15px;
+  }
+
+  section.clausula{
+    padding:36px 48px;
+    border-bottom:1px solid var(--borda);
+    position:relative;
+  }
+  section.clausula:last-of-type{border-bottom:none;}
+
+  .clausula-titulo{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    margin-bottom:18px;
+  }
+  .clausula-num{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--branco);
+    background:var(--bordo);
+    width:30px;height:30px;
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    font-weight:500;
+  }
+  .clausula-titulo h2{
+    font-family:var(--serif);
+    font-size:22px;
+    font-weight:600;
+    letter-spacing:-.01em;
+  }
+
+  .clausula-corpo{
+    padding-left:44px;
+    border-left:1px solid var(--bordo-linha);
+    margin-left:15px;
+  }
+
+  .item{
+    display:flex;
+    gap:12px;
+    font-size:14.5px;
+    line-height:1.75;
+    color:rgba(26,23,20,.86);
+    margin-bottom:14px;
+  }
+  .item:last-child{margin-bottom:0;}
+  .item-num{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--texto-terc);
+    flex-shrink:0;
+    padding-top:2px;
+    min-width:34px;
+  }
+
+  .preencher{
+    background:var(--bordo-suave);
+    color:var(--bordo);
+    padding:1px 7px;
+    border-radius:4px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    font-weight:600;
+    white-space:nowrap;
+    border:1px dashed var(--bordo);
+  }
+
+  .destaque{
+    background:var(--cinza);
+    border-left:3px solid var(--bordo);
+    border-radius:0 10px 10px 0;
+    padding:16px 18px;
+    margin-top:16px;
+    font-size:14px;
+    color:var(--texto-sec);
+    line-height:1.65;
+  }
+  .destaque b{color:var(--preto);}
+
+  table.dados{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:14px;
+    font-size:13.5px;
+  }
+  table.dados th{
+    text-align:left;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    color:var(--texto-terc);
+    padding:8px 14px 8px 0;
+    border-bottom:1px solid var(--borda);
+  }
+  table.dados td{
+    padding:10px 14px 10px 0;
+    border-bottom:1px solid var(--borda);
+    color:rgba(26,23,20,.86);
+    vertical-align:top;
+  }
+
+  /* ===== RODAPÉ DO DOCUMENTO ===== */
+  .encerramento{
+    padding:44px 48px 48px;
+    background:var(--preto);
+    border-radius:0 0 18px 18px;
+    color:var(--branco);
+  }
+  .encerramento h3{
+    font-family:var(--serif);
+    font-size:19px;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .encerramento p{
+    color:rgba(255,255,255,.68);
+    font-size:14px;
+    line-height:1.7;
+    max-width:560px;
+  }
+  .contatos{
+    margin-top:22px;
+    display:flex;
+    gap:28px;
+    flex-wrap:wrap;
+  }
+  .contato-item{font-family:var(--mono); font-size:13px;}
+  .contato-item span{display:block; color:rgba(255,255,255,.45); font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; font-family:var(--sans);}
+  .contato-item a{color:var(--branco); text-decoration:none; border-bottom:1px solid rgba(255,255,255,.3);}
+
+  .rodape-versao{
+    text-align:center;
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--texto-terc);
+    padding:28px 24px 0;
+  }
+
+  /* ===== RESPONSIVO ===== */
+  @media (max-width:860px){
+    .layout{grid-template-columns:1fr; gap:0;}
+    .doc{margin-top:-28px;}
+    .intro-humana, section.clausula, .encerramento{padding-left:24px; padding-right:24px;}
+    .clausula-corpo{padding-left:0; border-left:none; margin-left:0; margin-top:4px;}
+    .clausula-titulo{margin-bottom:14px;}
+
+    .toc-wrap{
+      position:static;
+      background:var(--branco);
+      border-radius:14px;
+      border:1px solid var(--borda);
+      margin:20px 0 18px;
+      overflow:hidden;
+    }
+    .toc-mobile-toggle{
+      display:flex;
+      width:100%;
+      align-items:center;
+      justify-content:space-between;
+      padding:16px 18px;
+      background:none;
+      border:none;
+      font-family:var(--sans);
+      font-weight:600;
+      font-size:14px;
+      color:var(--preto);
+      cursor:pointer;
+    }
+    .toc-mobile-toggle svg{transition:transform .2s ease;}
+    .toc-wrap.aberto .toc-mobile-toggle svg{transform:rotate(180deg);}
+    .toc-conteudo{
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .25s ease;
+      padding:0 12px;
+    }
+    .toc-wrap.aberto .toc-conteudo{max-height:600px; padding-bottom:12px;}
+    .toc-label{display:none;}
+  }
+
+  @media (max-width:520px){
+    .topo{padding:40px 18px 52px;}
+    .layout{padding:0 16px 70px;}
+    .intro-humana, section.clausula, .encerramento{padding-left:20px; padding-right:20px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <div class="topo-inner">
+    <div class="marca">Cássia Rodrigues <span>· Personal Training</span></div>
+    <h1>Termos de Uso e Política de Privacidade</h1>
+    <div class="topo-meta">
+      <div><b>Versão</b> 1.0</div>
+      <div><b>Vigência</b> individual, a partir do aceite de cada aluna (cláusula 02)</div>
+      <div><b>Local</b> Belém — PA, Brasil</div>
+    </div>
+    <p class="topo-intro">Este documento regula a relação entre a Consultoria Cássia Rodrigues e cada aluna ou aluno que contrata os serviços de personal training, presenciais ou online, incluindo o uso das ferramentas digitais de cadastro, anamnese e acompanhamento.</p>
+  </div>
+</div>
+
+<div class="layout">
+
+  <nav class="toc-wrap" id="tocWrap">
+    <button class="toc-mobile-toggle" id="tocToggle">
+      Sumário do documento
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="toc-conteudo">
+      <div class="toc-label">Sumário</div>
+      <ul class="toc-list" id="tocList">
+        <li><a href="#c1"><span class="toc-num">01</span>Quem somos e objeto do serviço</a></li>
+        <li><a href="#c2"><span class="toc-num">02</span>Aceite dos termos</a></li>
+        <li><a href="#c3"><span class="toc-num">03</span>Cadastro e ficha de anamnese</a></li>
+        <li><a href="#c4"><span class="toc-num">04</span>Riscos da atividade física</a></li>
+        <li><a href="#c5"><span class="toc-num">05</span>Uso de imagem</a></li>
+        <li><a href="#c6"><span class="toc-num">06</span>Pagamentos</a></li>
+        <li><a href="#c7"><span class="toc-num">07</span>Tratamento de dados (LGPD)</a></li>
+        <li><a href="#c8"><span class="toc-num">08</span>Propriedade intelectual</a></li>
+        <li><a href="#c9"><span class="toc-num">09</span>Conduta e relacionamento</a></li>
+        <li><a href="#c10"><span class="toc-num">10</span>Rescisão e cancelamento</a></li>
+        <li><a href="#c11"><span class="toc-num">11</span>Alterações deste termo</a></li>
+        <li><a href="#c12"><span class="toc-num">12</span>Foro e legislação</a></li>
+        <li><a href="#c13"><span class="toc-num">13</span>Contato</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="doc">
+
+    <div class="intro-humana">
+      <p>Antes de entrar nas cláusulas, um recado direto: este documento existe para proteger as duas partes — você, que está confiando seu corpo e sua rotina a um processo de treino, e eu, que assumo a responsabilidade técnica por conduzir esse processo com seriedade. Não é uma formalidade burocrática solta no meio do caminho; é o que sustenta uma relação de trabalho justa e transparente.</p>
+      <p>Leia com calma. Qualquer dúvida sobre qualquer ponto abaixo, fale comigo antes de iniciar os treinos — prefiro esclarecer agora do que deixar zonas cinzentas para depois.</p>
+      <div class="assinatura-intro">— Cássia</div>
+    </div>
+
+    <section class="clausula" id="c1">
+      <div class="clausula-titulo"><div class="clausula-num">01</div><h2>Quem somos e objeto do serviço</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">1.1</span><span>Estes Termos regem a prestação de serviços de personal training por <b>Cássia Rodrigues</b>, registrada no CREF sob nº <b>020444-G/PA</b>, inscrita no CNPJ sob nº <b>65.018.388/0001-01</b>, com atendimento em Belém — PA e/ou modalidade online, doravante denominada apenas "Consultoria".</span></div>
+        <div class="item"><span class="item-num">1.2</span><span>O serviço compreende avaliação física inicial, anamnese de saúde, prescrição e acompanhamento de treinos, orientações gerais sobre atividade física e, quando aplicável, suporte por aplicativo, planilha ou plataforma digital própria.</span></div>
+        <div class="item"><span class="item-num">1.3</span><span>O serviço <b>não substitui</b> acompanhamento médico, nutricional ou psicológico. Orientações alimentares eventualmente fornecidas têm caráter geral e educativo, não configurando prescrição nutricional.</span></div>
+        <div class="item"><span class="item-num">1.4</span><span>Estes Termos aplicam-se a toda pessoa que preenche a ficha de anamnese, agenda uma sessão, contrata um plano ou utiliza qualquer ferramenta digital vinculada à Consultoria.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c2">
+      <div class="clausula-titulo"><div class="clausula-num">02</div><h2>Aceite dos termos</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">2.1</span><span>Ao preencher a ficha de anamnese, confirmar um agendamento, iniciar uma sessão de treino ou efetuar qualquer pagamento, a aluna declara ter lido, compreendido e aceitado integralmente estes Termos.</span></div>
+        <div class="item"><span class="item-num">2.2</span><span>Caso não concorde com qualquer cláusula, a aluna deve manifestar-se antes do início dos serviços. A continuidade do uso após o aceite inicial implica concordância com eventuais atualizações comunicadas conforme a cláusula 11.</span></div>
+        <div class="item"><span class="item-num">2.3</span><span>Para menores de 18 anos, o aceite destes Termos e a autorização para participação nos treinos devem ser formalizados por responsável legal.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c3">
+      <div class="clausula-titulo"><div class="clausula-num">03</div><h2>Cadastro e ficha de anamnese</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">3.1</span><span>A aluna compromete-se a fornecer informações <b>verdadeiras, completas e atualizadas</b> na ficha de anamnese, incluindo histórico de saúde, lesões prévias, cirurgias, uso de medicamentos, condições crônicas e quaisquer limitações físicas.</span></div>
+        <div class="item"><span class="item-num">3.2</span><span>É dever da aluna comunicar imediatamente à Consultoria qualquer alteração relevante no seu quadro de saúde durante o período de acompanhamento, incluindo gravidez, novas lesões, cirurgias ou diagnósticos médicos.</span></div>
+        <div class="item"><span class="item-num">3.3</span><span>Recomenda-se a apresentação de atestado médico de aptidão física antes do início das atividades, especialmente para alunas com histórico cardiovascular, ortopédico, respiratório, gestantes ou em pós-operatório.</span></div>
+        <div class="destaque"><b>Importante:</b> a omissão ou a inexatidão de informações de saúde na ficha de anamnese transfere à aluna a responsabilidade por eventuais intercorrências diretamente decorrentes dessa omissão, sem prejuízo da responsabilidade técnica da Consultoria nos demais aspectos da prestação do serviço.</div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c4">
+      <div class="clausula-titulo"><div class="clausula-num">04</div><h2>Riscos da atividade física</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">4.1</span><span>A prática de exercícios físicos envolve riscos inerentes — fadiga, dores musculares, desconforto, lesões leves a moderadas e, em casos raros, eventos mais sérios — mesmo quando conduzida com técnica adequada.</span></div>
+        <div class="item"><span class="item-num">4.2</span><span>A aluna declara estar ciente desses riscos e assume responsabilidade por seguir as orientações técnicas fornecidas, respeitando a execução correta dos movimentos, as cargas prescritas e os limites comunicados pela Consultoria.</span></div>
+        <div class="item"><span class="item-num">4.3</span><span>A Consultoria compromete-se a agir com zelo, atualização técnica e prudência profissional, adequando a prescrição ao histórico informado. Resultados específicos não são garantidos, pois dependem de fatores individuais — adesão ao plano, alimentação, sono, genética e fatores externos ao controle da Consultoria.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c5">
+      <div class="clausula-titulo"><div class="clausula-num">05</div><h2>Uso de imagem</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">5.1</span><span>Ao contratar os serviços, você autoriza o uso gratuito e por prazo indeterminado de fotos, vídeos e registros de evolução (incluindo antes e depois) feitos durante as sessões, para divulgação em redes sociais, no site e em materiais da Consultoria. Isso não gera nenhum tipo de remuneração ou pagamento.</span></div>
+        <div class="item"><span class="item-num">5.2</span><span>Você pode revogar essa autorização quando quiser, basta avisar pelo WhatsApp ou e-mail. As publicações sob meu controle são retiradas em até <b>15 dias úteis</b>. O que já foi compartilhado por terceiros, fora do meu alcance, pode não ser removido.</span></div>
+        <div class="item"><span class="item-num">5.3</span><span>Se preferir não ter sua imagem usada desde o começo, é só avisar no cadastro ou na ficha de anamnese. Fotos e vídeos de avaliação que não forem autorizados para divulgação ficam guardados apenas para uso técnico interno, com o mesmo cuidado da cláusula 07.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c6">
+      <div class="clausula-titulo"><div class="clausula-num">06</div><h2>Pagamentos</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">6.1</span><span>Os valores, formas e periodicidade de pagamento são definidos no momento da contratação e podem ser revisados pela Consultoria mediante aviso prévio de <b>30 dias</b>, não se aplicando a reajuste a ciclos já pagos.</span></div>
+        <div class="item"><span class="item-num">6.2</span><span>Pagamentos recorrentes devem ser realizados até a data de vencimento acordada. O atraso superior a <b>5 dias</b> pode acarretar suspensão temporária do acesso aos serviços, planos e materiais, até a regularização.</span></div>
+        <div class="item"><span class="item-num">6.3</span><span><b>Não há reembolso</b> de valores referentes a serviços já prestados, sessões já realizadas ou planos de treino já disponibilizados à aluna.</span></div>
+        <div class="item"><span class="item-num">6.4</span><span>Cancelamentos solicitados antes do início de um novo ciclo de cobrança não geram cobrança adicional. Cancelamentos no meio de um ciclo já pago não geram reembolso proporcional, ressalvada decisão diversa tomada pela Consultoria em caráter de exceção.</span></div>
+        <div class="item"><span class="item-num">6.5</span><span>Sessões presenciais remarcadas ou canceladas pela aluna com menos de <b>12 horas</b> de antecedência poderão ser cobradas integralmente, conforme a política de agenda vigente comunicada à aluna.</span></div>
+        <div class="item"><span class="item-num">6.6</span><span>A inadimplência superior a <b>15 dias</b> autoriza a Consultoria a suspender ou encerrar o atendimento, sem prejuízo da cobrança dos valores já devidos.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c7">
+      <div class="clausula-titulo"><div class="clausula-num">07</div><h2>Tratamento de dados pessoais (LGPD)</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">7.1</span><span>A Consultoria, na qualidade de controladora de dados, trata as informações pessoais da aluna em conformidade com a Lei nº 13.709/2018 (Lei Geral de Proteção de Dados — LGPD).</span></div>
+        <div class="item"><span class="item-num">7.2</span><span>Os dados coletados incluem: nome, contato, dados da ficha de anamnese (incluindo dados sensíveis de saúde), métricas físicas, fotos de evolução quando enviadas, histórico de pagamento e registros de comunicação.</span></div>
+
+        <table class="dados">
+          <tr><th>Finalidade</th><th>Base legal</th></tr>
+          <tr><td>Avaliação física e prescrição segura de treinos</td><td>Execução de contrato e tutela da saúde (art. 11, II, "f")</td></tr>
+          <tr><td>Comunicação sobre agendamentos e cobranças</td><td>Execução de contrato</td></tr>
+          <tr><td>Uso de imagem para divulgação</td><td>Consentimento específico (cláusula 05)</td></tr>
+          <tr><td>Envio de conteúdo e novidades</td><td>Consentimento, revogável a qualquer momento</td></tr>
+        </table>
+
+        <div class="item" style="margin-top:18px"><span class="item-num">7.3</span><span>Os dados podem ser compartilhados com operadores estritamente necessários à prestação do serviço — como planilhas e formulários do Google (Google Sheets / Google Apps Script) e o WhatsApp Business — todos sujeitos a suas próprias políticas de segurança, sem venda ou cessão a terceiros para fins alheios ao serviço contratado.</span></div>
+        <div class="item"><span class="item-num">7.4</span><span>Os dados são mantidos pelo período de vigência do serviço, acrescido do prazo necessário ao cumprimento de obrigações legais ou regulatórias, sendo eliminados ou anonimizados após esse período, salvo solicitação de exclusão antecipada.</span></div>
+        <div class="item"><span class="item-num">7.5</span><span>A aluna pode, a qualquer momento, solicitar acesso, correção, anonimização, portabilidade ou exclusão de seus dados pessoais, mediante contato direto pelos canais informados na cláusula 13.</span></div>
+        <div class="item"><span class="item-num">7.6</span><span>A Consultoria adota medidas razoáveis de segurança técnica e administrativa para proteger os dados contra acessos não autorizados, perda ou vazamento, dentro das limitações de uma operação de pequeno porte.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c8">
+      <div class="clausula-titulo"><div class="clausula-num">08</div><h2>Propriedade intelectual</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">8.1</span><span>Planos de treino, fichas, materiais educativos, vídeos e qualquer conteúdo produzido pela Consultoria são de uso pessoal e intransferível da aluna que os recebeu.</span></div>
+        <div class="item"><span class="item-num">8.2</span><span>É vedada a reprodução, revenda, compartilhamento com terceiros ou divulgação pública desses materiais sem autorização expressa e por escrito da Consultoria.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c9">
+      <div class="clausula-titulo"><div class="clausula-num">09</div><h2>Conduta e relacionamento</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">9.1</span><span>Espera-se pontualidade nos horários agendados e comunicação prévia em caso de impossibilidade de comparecimento.</span></div>
+        <div class="item"><span class="item-num">9.2</span><span>Toda comunicação oficial deve ocorrer pelos canais informados na cláusula 13, garantindo registro e clareza para ambas as partes.</span></div>
+        <div class="item"><span class="item-num">9.3</span><span>A Consultoria reserva-se o direito de interromper o atendimento em casos de conduta desrespeitosa, assédio ou descumprimento reiterado destes Termos.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c10">
+      <div class="clausula-titulo"><div class="clausula-num">10</div><h2>Rescisão e cancelamento</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">10.1</span><span>Qualquer das partes pode rescindir o serviço mediante aviso prévio de <b>7 dias</b>, observadas as condições financeiras da cláusula 06.</span></div>
+        <div class="item"><span class="item-num">10.2</span><span>A Consultoria reserva-se o direito de encerrar o atendimento de forma unilateral em caso de inadimplência não regularizada, descumprimento destes Termos ou conduta inadequada, sem necessidade de aviso prévio nesses casos.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c11">
+      <div class="clausula-titulo"><div class="clausula-num">11</div><h2>Alterações deste termo</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">11.1</span><span>Estes Termos podem ser atualizados a qualquer momento, com a nova versão disponibilizada nos canais oficiais da Consultoria, indicando a data de vigência.</span></div>
+        <div class="item"><span class="item-num">11.2</span><span>O uso continuado dos serviços após a publicação de uma nova versão implica aceite das alterações.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c12">
+      <div class="clausula-titulo"><div class="clausula-num">12</div><h2>Foro e legislação aplicável</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">12.1</span><span>Estes Termos são regidos pelas leis da República Federativa do Brasil, incluindo o Código de Defesa do Consumidor (Lei nº 8.078/90), o Código Civil e a LGPD (Lei nº 13.709/2018).</span></div>
+        <div class="item"><span class="item-num">12.2</span><span>Fica eleito o foro da comarca de Belém — PA para dirimir quaisquer controvérsias decorrentes destes Termos, com renúncia a qualquer outro, por mais privilegiado que seja.</span></div>
+      </div>
+    </section>
+
+    <section class="clausula" id="c13" style="border-bottom:none;">
+      <div class="clausula-titulo"><div class="clausula-num">13</div><h2>Contato</h2></div>
+      <div class="clausula-corpo">
+        <div class="item"><span class="item-num">13.1</span><span>Dúvidas sobre estes Termos, solicitações de acesso a dados ou revogação de uso de imagem podem ser feitas diretamente pelos canais abaixo.</span></div>
+      </div>
+    </section>
+
+    <div class="encerramento">
+      <h3>Fale comigo</h3>
+      <p>Qualquer ponto deste documento que precise de mais clareza, estou disponível para conversar antes de você iniciar os treinos.</p>
+      <div class="contatos">
+        <div class="contato-item"><span>WhatsApp</span><a href="https://wa.me/5591985766547" target="_blank">+55 91 98576-6547</a></div>
+        <div class="contato-item"><span>E-mail</span><a href="mailto:cassiarodriguespersonal@gmail.com">cassiarodriguespersonal@gmail.com</a></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="rodape-versao">Consultoria Cássia Rodrigues — Termos de Uso e Política de Privacidade — v1.0</div>
+
+<script>
+  // Toggle do sumário no mobile
+  const tocWrap = document.getElementById('tocWrap');
+  const tocToggle = document.getElementById('tocToggle');
+  tocToggle.addEventListener('click', () => tocWrap.classList.toggle('aberto'));
+
+  // Scrollspy: destaca o item ativo do sumário
+  const links = document.querySelectorAll('.toc-list a');
+  const secoes = document.querySelectorAll('section.clausula');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute('id');
+        links.forEach(l => l.classList.remove('ativo'));
+        const ativo = document.querySelector(`.toc-list a[href="#${id}"]`);
+        if (ativo) ativo.classList.add('ativo');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+  secoes.forEach(s => observer.observe(s));
+
+  // Fecha o menu mobile ao clicar em um link
+  links.forEach(l => l.addEventListener('click', () => {
+    if (window.innerWidth <= 860) tocWrap.classList.remove('aberto');
+  }));
+</script>
+
+</body>
+</html>
