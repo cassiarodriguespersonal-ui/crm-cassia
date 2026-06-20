@@ -168,16 +168,43 @@
 
   function iniciar(){
     if (!nome) {
-      mostrarErro('Esse link não tem o nome da aluna. Confirme o link certinho com a Cássia.');
+      renderizarPedirNome();
       return;
     }
+    carregarCheckinDe(nome);
+  }
 
+  function renderizarPedirNome(){
     document.getElementById('titulo').textContent = 'Check-in semanal';
-    document.getElementById('subtitulo').textContent = 'Olá, ' + primeiroNome(nome) + '! Leva menos de um minuto.';
+    document.getElementById('subtitulo').textContent = 'Consultoria Cássia Rodrigues';
+
+    document.getElementById('corpo').innerHTML =
+      '<div class="field"><label>Pra começar, digite seu nome completo, igual está na sua ficha</label><input type="text" id="campoNomeProprio" placeholder="Seu nome completo"></div>' +
+      '<button class="btn btn-primary" id="btnContinuarNome">Continuar</button>';
+
+    var campo = document.getElementById('campoNomeProprio');
+    var btn = document.getElementById('btnContinuarNome');
+
+    function prosseguir(){
+      var valor = campo.value.trim();
+      if (!valor) { campo.focus(); return; }
+      nome = valor;
+      carregarCheckinDe(nome);
+    }
+
+    btn.addEventListener('click', prosseguir);
+    campo.addEventListener('keydown', function(e){ if (e.key === 'Enter') prosseguir(); });
+    campo.focus();
+  }
+
+  function carregarCheckinDe(nomeBuscado){
+    document.getElementById('titulo').textContent = 'Check-in semanal';
+    document.getElementById('subtitulo').textContent = 'Olá, ' + primeiroNome(nomeBuscado) + '! Leva menos de um minuto.';
+    document.getElementById('corpo').innerHTML = '<div class="estado-erro" style="color:var(--ink-soft);">Carregando...</div>';
 
     buscarAlunas(function(lista){
       if (lista) {
-        var chave = nome.toLowerCase();
+        var chave = nomeBuscado.toLowerCase();
         alunaEncontrada = lista.filter(function(a){
           return String(a['Nome']||'').trim().toLowerCase() === chave;
         })[0];
