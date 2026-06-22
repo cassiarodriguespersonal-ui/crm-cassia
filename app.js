@@ -666,7 +666,7 @@ function renderEnvioFerramenta() {
 
   listaEl.innerHTML = visiveis.length ? visiveis.map(function (a, i) {
     return '<label style="display:flex; align-items:center; justify-content:flex-start; gap:.6rem; padding:.4rem 0; border-bottom:1px solid var(--line-soft); font-size:.86rem; font-weight:400; color:var(--ink); margin-bottom:0; cursor:pointer;">' +
-      '<input type="checkbox" class="ferramenta-check-aluna" value="' + i + '" style="flex-shrink:0; margin:0;">' +
+      '<input type="checkbox" class="ferramenta-check-aluna" value="' + i + '" style="width:auto; height:auto; flex-shrink:0; margin:0; padding:0;">' +
       '<span>' + a['Nome'] + '</span>' +
     '</label>';
   }).join('') : '<p style="color:var(--ink-soft); font-size:.84rem;">Nenhuma aluna cadastrada.</p>';
