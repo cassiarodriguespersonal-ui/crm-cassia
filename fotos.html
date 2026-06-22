@@ -166,6 +166,40 @@
     .pose svg{ width: 48px; height: 84px; }
     .card{ padding: 1.4rem 1.3rem; }
   }
+
+  /* ===== SLOGAN RODAPÉ ===== */
+  .slogan-rodape{
+    text-align:center;
+    padding:24px 28px 28px;
+  }
+  .slogan-linha{
+    width:28px; height:1px;
+    background:rgba(124,27,42,.6);
+    margin:0 auto 14px;
+  }
+  .slogan-texto{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:13px;
+    color:rgba(255,255,255,.45);
+    line-height:1.75;
+    letter-spacing:.01em;
+    margin:0;
+  }
+  .slogan-assinatura{
+    margin-top:10px;
+    font-size:10px;
+    color:rgba(124,27,42,.7);
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  /* variante clara */
+  .slogan-light .slogan-linha{ background:rgba(124,27,42,.35); }
+  .slogan-light .slogan-texto{ color:#67676B; }
+  .slogan-light .slogan-assinatura{ color:#7C1B2A; opacity:.7; }
+
 </style>
 </head>
 <body>
@@ -399,5 +433,13 @@
     });
   })();
   </script>
+
+<!-- ===== SLOGAN RODAPÉ ===== -->
+<footer class="slogan-rodape slogan-light">
+  <div class="slogan-linha"></div>
+  <blockquote class="slogan-texto">&ldquo;A evolução não acontece por acaso. Ela nasce da presença constante, de um método bem construído e da valorização de cada conquista, cada dificuldade e cada pessoa.&rdquo;</blockquote>
+  <p class="slogan-assinatura">Cássia Rodrigues</p>
+</footer>
+
 </body>
 </html>
