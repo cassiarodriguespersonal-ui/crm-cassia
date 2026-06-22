@@ -328,8 +328,13 @@
   }
 
   function montarComprovante(){
+    var logoImg = document.querySelector('.marca img');
+    var logoSrc = logoImg ? logoImg.src : '';
+    var logoHtml = logoSrc
+      ? '<div style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><img src="' + logoSrc + '" style="width:19px; height:auto; display:block;" alt=""></div>'
+      : '';
     document.getElementById('comprovante').innerHTML =
-      '<div class="cp-topo"><div class="marca" style="color:#D98994;">Consultoria Cássia Rodrigues</div><h2 style="color:#fff; margin-top:10px;">Comprovante de Aceite de Contrato</h2></div>' +
+      '<div class="cp-topo"><div class="marca" style="display:flex; align-items:center; gap:10px; color:#D98994;">' + logoHtml + '<span>Consultoria Cássia Rodrigues</span></div><h2 style="color:#fff; margin-top:10px;">Comprovante de Aceite de Contrato</h2></div>' +
       '<div class="cp-corpo">' +
         '<div class="cp-linha"><span>Aluna</span><span>' + alunaEncontrada['Nome'] + '</span></div>' +
         '<div class="cp-linha"><span>Data do aceite</span><span>' + formatarDataBR(contratoAtual['Data Aceite']) + '</span></div>' +
