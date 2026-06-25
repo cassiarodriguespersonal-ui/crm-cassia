@@ -29,6 +29,10 @@
   .progress-bar-inner { height:100%; background:var(--bordo); transition:width .3s; }
   .estado-sucesso { text-align:center; padding:40px 0; }
   .estado-sucesso .selo { width:64px; height:64px; border-radius:50%; background:var(--verde-suave); color:var(--verde); display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 18px; }
+  .hidden { display: none !important; }
+  .preview-grid.show { display: grid; margin-top: 10px; }
+  .preview-grid img { width: 100%; border-radius: 8px; }
+  .preview-grid span { display: block; font-size: .75rem; color: #888; margin-top: 4px; text-align: center; }
 </style>
 </head>
 <body class="cr-tela-page">
@@ -38,7 +42,70 @@
   </header>
 
   <main style="max-width:600px; margin:0 auto; padding:28px 16px 64px;" id="corpo-fotos">
-    <!-- preenchido pelo JS -->
+    <div id="uploadCard" class="cr-card" style="padding:24px 20px 28px;">
+
+      <!-- Nome da aluna -->
+      <div class="field" style="margin-bottom:20px;">
+        <label class="cr-label" for="nomeAluno">Seu nome completo</label>
+        <input class="cr-input" type="text" id="nomeAluno" placeholder="Como está cadastrado na sua ficha" autocomplete="name">
+        <p id="avisoNomeNaoEncontrado" class="hidden" style="margin:.45rem 0 0; font-size:.82rem; color:#B85C00;">
+          ⚠️ Nome não encontrado no sistema. Confira se está escrito exatamente como na sua ficha de avaliação.
+        </p>
+      </div>
+
+      <!-- Foto de frente -->
+      <div class="field" style="margin-bottom:16px;">
+        <label class="cr-label" for="fotoFrente">📸 Foto de frente</label>
+        <label class="zona-upload" for="fotoFrente" id="zonaFrente">
+          <div class="icone">🖼️</div>
+          <p>Toque aqui para escolher a foto de <strong>frente</strong></p>
+        </label>
+        <input type="file" id="fotoFrente" accept="image/*" capture="environment" style="display:none;">
+        <div class="preview-grid" id="previewFrente"></div>
+      </div>
+
+      <!-- Foto de perfil -->
+      <div class="field" style="margin-bottom:16px;">
+        <label class="cr-label" for="fotoPerfil">📸 Foto de perfil (lado)</label>
+        <label class="zona-upload" for="fotoPerfil" id="zonaPerfil">
+          <div class="icone">🖼️</div>
+          <p>Toque aqui para escolher a foto de <strong>perfil</strong></p>
+        </label>
+        <input type="file" id="fotoPerfil" accept="image/*" capture="environment" style="display:none;">
+        <div class="preview-grid" id="previewPerfil"></div>
+      </div>
+
+      <!-- Foto de costas -->
+      <div class="field" style="margin-bottom:20px;">
+        <label class="cr-label" for="fotoCostas">📸 Foto de costas</label>
+        <label class="zona-upload" for="fotoCostas" id="zonaCostas">
+          <div class="icone">🖼️</div>
+          <p>Toque aqui para escolher a foto de <strong>costas</strong></p>
+        </label>
+        <input type="file" id="fotoCostas" accept="image/*" capture="environment" style="display:none;">
+        <div class="preview-grid" id="previewCostas"></div>
+      </div>
+
+      <!-- Erro -->
+      <p id="erroEnvio" class="hidden" style="color:#C0392B; font-size:.85rem; margin:0 0 12px;">
+        ⚠️ Preencha seu nome e envie ao menos uma foto.
+      </p>
+
+      <!-- Botão -->
+      <div class="cta-wrap" style="text-align:center;">
+        <button class="cr-btn cr-btn--primary" id="btnEnviarFotos" style="width:100%; max-width:340px;">
+          Enviar fotos
+        </button>
+      </div>
+
+      <!-- Confirmação (oculta até o envio) -->
+      <div id="confirmacaoEnvio" class="hidden estado-sucesso" style="padding:32px 0;">
+        <div class="selo" style="background:#DEEAE1; color:#3E6650; width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 16px;">✓</div>
+        <p style="font-size:1.05rem; font-weight:600; color:#3E6650; margin:0 0 8px;">Fotos enviadas com sucesso!</p>
+        <p style="font-size:.88rem; color:#666; margin:0;">Cássia recebeu suas fotos e vai analisar em breve. 💪</p>
+      </div>
+
+    </div>
   </main>
 
   <div style="text-align:center; padding:24px 20px 40px;">
