@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Como tirar suas fotos de avaliação — Cássia Rodrigues</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg: #F7F4F2;
+    --paper: #FFFFFF;
+    --ink: #1A1714;
+    --ink-soft: #5E5650;
+    --pine: #1A1714;
+    --pine-soft: #ECE7E4;
+    --accent: #7C1B2A;
+    --accent-soft: #F2E1E3;
+    --line: #E6E1DE;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgba(26,23,20,.04), 0 8px 24px rgba(26,23,20,.06);
+    --verde: #3E6650;
+    --verde-suave: #DEEAE1;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; background: var(--bg); }
+  body{
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', serif; font-weight:600; margin:0; letter-spacing:-.01em; color: var(--pine); }
+
+  .wrap{
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4.5rem;
+  }
+  .logo{ width: 170px; display:block; margin: 0 auto 2.2rem; }
+
+  .eyebrow{
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: .6rem;
+    text-align:center;
+  }
+  h1{ font-size: 1.9rem; text-align:center; margin-bottom: .8rem; }
+  .subtitle{
+    text-align:center;
+    color: var(--ink-soft);
+    font-size: 1rem;
+    max-width: 480px;
+    margin: 0 auto 2.6rem;
+  }
+
+  .card{
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.8rem 1.9rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.6rem;
+  }
+  .card h2{ font-size: 1.25rem; margin-bottom: .7rem; }
+  .card p{ color: var(--ink-soft); font-size: .95rem; margin: 0 0 .8rem; }
+  .card p:last-child{ margin-bottom: 0; }
+
+  .checklist{ list-style:none; margin: 0; padding:0; display:grid; gap:.7rem; }
+  .checklist li{
+    display:flex; gap:.7rem; align-items:flex-start;
+    font-size: .92rem; color: var(--ink);
+  }
+  .checklist li::before{
+    content:'';
+    width: 18px; height:18px;
+    flex-shrink:0;
+    margin-top:.15rem;
+    border-radius: 5px;
+    border: 1.5px solid var(--accent);
+    background: var(--accent-soft);
+  }
+
+  /* ===== POSES ===== */
+  .poses{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: .5rem;
+  }
+  .pose{
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 1.1rem .6rem 1rem;
+    text-align: center;
+  }
+  .pose svg{ width: 64px; height: 110px; margin-bottom: .5rem; }
+  .pose .pose-label{ font-weight:600; font-size: .85rem; color: var(--pine); }
+  .pose .pose-hint{ font-size: .75rem; color: var(--ink-soft); margin-top:.2rem; }
+
+  /* ===== ZONA DE UPLOAD ===== */
+  .zona-upload{
+    display:block;
+    border: 2px dashed var(--line);
+    border-radius: var(--radius-sm);
+    padding: 28px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    background: var(--paper);
+    margin-bottom: 10px;
+  }
+  .zona-upload:hover, .zona-upload.drag{
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .zona-upload .icone{ font-size: 30px; margin-bottom: 8px; display:block; }
+  .zona-upload p{ font-size: .875rem; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+  .zona-upload strong{ color: var(--accent); }
+
+  /* ===== FOTO — DUAS OPÇÕES ===== */
+  .foto-opcoes{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .7rem;
+    margin-bottom: 10px;
+  }
+  .btn-opcao{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 10px;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--accent);
+    transition: border-color .15s, background .15s;
+  }
+  .btn-opcao:hover{
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .btn-opcao .emoji{ font-size: 22px; }
+
+  /* ===== PREVIEW ===== */
+  .foto-preview{ display:none; align-items:center; gap:.7rem; margin-top: 8px; }
+  .foto-preview.show{ display:flex; }
+  .foto-preview img{ width:64px; height:64px; object-fit:cover; border-radius: var(--radius-sm); border:1px solid var(--line); }
+  .foto-preview .preview-info{ display:flex; flex-direction:column; gap:3px; }
+  .foto-preview .preview-nome{ font-size:.8rem; color: var(--ink-soft); word-break:break-all; }
+  .foto-preview .preview-remover{
+    font-size:.75rem; color: var(--accent); cursor:pointer;
+    background:none; border:none; padding:0; font-family:inherit; font-weight:600; text-align:left;
+  }
+
+  /* ===== CAMPOS ===== */
+  .field{ margin-bottom: 1.3rem; }
+  .flabel{ display:block; font-size:.88rem; font-weight:600; margin-bottom:.5rem; color: var(--ink); }
+  input[type=text]{
+    width:100%; padding:.75rem .9rem; border:1px solid var(--line);
+    border-radius: var(--radius-sm); background: var(--paper);
+    font-family: inherit; font-size:.95rem; color: var(--ink);
+    outline:none;
+  }
+  input[type=text]:focus{ border-color: var(--accent); }
+
+  .aviso-nome{ color:#A8591C; background:#F4E6D7; border-radius:8px; padding:.6rem .8rem; font-size:.8rem; margin-top:.5rem; display:none; }
+  .aviso-nome.show{ display:block; }
+  .error-msg{ color:#C0392B; font-size:.85rem; margin: -.3rem 0 .8rem; display:none; }
+  .error-msg.show{ display:block; }
+
+  /* ===== BOTÃO PRINCIPAL ===== */
+  .cta-wrap{ text-align:center; margin-top: 1.6rem; }
+  .btn{
+    display:inline-block;
+    font-family: inherit;
+    font-size: .95rem;
+    font-weight: 600;
+    padding: .9rem 2.2rem;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    background: var(--accent);
+    color: #fff;
+    width: 100%;
+    max-width: 340px;
+    transition: opacity .15s;
+  }
+  .btn:hover{ opacity:.9; }
+  .btn:disabled{ opacity:.55; cursor:default; }
+
+  /* ===== CONFIRMAÇÃO ===== */
+  .estado-sucesso{
+    text-align:center; padding: 40px 0;
+  }
+  .estado-sucesso .selo{
+    width:64px; height:64px; border-radius:50%;
+    background: var(--verde-suave); color: var(--verde);
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px; margin: 0 auto 18px;
+  }
+  .estado-sucesso p{ margin: 0 0 6px; }
+
+  .footnote{
+    text-align:center;
+    font-size: .78rem;
+    color: var(--ink-soft);
+    margin-top: 1rem;
+  }
+
+  .hidden{ display:none !important; }
+
+  /* ===== SLOGAN RODAPÉ ===== */
+  .slogan-rodape{
+    text-align:center;
+    padding:24px 28px 36px;
+    background: var(--pine);
+  }
+  .slogan-linha{
+    width:28px; height:1px;
+    background:rgba(124,27,42,.6);
+    margin:0 auto 14px;
+  }
+  .slogan-texto{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:13px;
+    color:rgba(255,255,255,.6);
+    line-height:1.75;
+    letter-spacing:.01em;
+    margin:0;
+  }
+  .slogan-assinatura{
+    margin-top:10px;
+    font-size:10px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,.35);
+  }
+
+  @media (max-width: 540px){
+    .poses{ gap:.6rem; }
+    .pose{ padding: .8rem .4rem; }
+    .pose svg{ width: 48px; height: 84px; }
+    .card{ padding: 1.4rem 1.3rem; }
+    .foto-opcoes{ grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- Logo -->
+  <img class="logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 120'%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='serif' font-size='26' font-weight='700' fill='%237C1B2A'%3ECássia Rodrigues%3C/text%3E%3Ctext x='50%25' y='80%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='10' fill='%23888' letter-spacing='3'%3EPERSONAL TRAINER%3C/text%3E%3C/svg%3E" alt="Cássia Rodrigues — Personal Trainer">
+
+  <div class="eyebrow">Guia Rápido</div>
+  <h1>Como tirar suas fotos de avaliação</h1>
+  <p class="subtitle">Cinco minutos bem investidos aqui fazem toda diferença para acompanharmos sua evolução de verdade, com comparações justas ao longo do tempo.</p>
+
+  <!-- Por que importa -->
+  <div class="card">
+    <h2>Por que isso importa</h2>
+    <p>Números na balança contam parte da história, mas o espelho conta outra. Fotos tiradas sempre do mesmo jeito, com a mesma luz e a mesma distância, são a forma mais honesta de ver o que está realmente mudando no seu corpo, mês a mês, sem depender só de como você se sente naquele dia.</p>
+  </div>
+
+  <!-- Antes de tirar -->
+  <div class="card">
+    <h2>Antes de tirar a foto</h2>
+    <ul class="checklist">
+      <li>Roupa justa ao corpo (roupa de treino ou de banho funciona bem), de preferência a mesma nas próximas vezes.</li>
+      <li>Luz natural, de frente para uma janela, evitando sombras fortes de um lado só.</li>
+      <li>Fundo neutro e sem muita coisa atrás — uma parede lisa já resolve.</li>
+      <li>Celular na vertical, apoiado ou com alguém te ajudando, sempre à mesma distância.</li>
+      <li>Se possível, no mesmo horário do dia e antes de comer, para manter o padrão.</li>
+    </ul>
+  </div>
+
+  <!-- As três poses -->
+  <div class="card">
+    <h2>As três fotos</h2>
+    <p>Postura neutra, relaxada, olhando para frente. Nada de contrair ou se esconder — a ideia é registrar o ponto de partida real.</p>
+    <div class="poses">
+
+      <!-- Frente -->
+      <div class="pose">
+        <svg viewBox="0 0 80 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="15" r="12" fill="#7C1B2A"/>
+          <rect x="26" y="30" width="28" height="40" rx="6" fill="#7C1B2A"/>
+          <rect x="10" y="32" width="14" height="30" rx="5" fill="#7C1B2A"/>
+          <rect x="56" y="32" width="14" height="30" rx="5" fill="#7C1B2A"/>
+          <rect x="27" y="70" width="12" height="40" rx="5" fill="#7C1B2A"/>
+          <rect x="41" y="70" width="12" height="40" rx="5" fill="#7C1B2A"/>
+        </svg>
+        <div class="pose-label">Frente</div>
+        <div class="pose-hint">De frente, braços relaxados ao lado do corpo</div>
+      </div>
+
+      <!-- Perfil -->
+      <div class="pose">
+        <svg viewBox="0 0 80 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="42" cy="15" r="12" fill="#7C1B2A"/>
+          <rect x="32" y="30" width="22" height="40" rx="6" fill="#7C1B2A"/>
+          <rect x="20" y="34" width="10" height="26" rx="4" fill="#7C1B2A"/>
+          <rect x="33" y="70" width="11" height="40" rx="5" fill="#7C1B2A"/>
+          <rect x="46" y="70" width="11" height="38" rx="5" fill="#7C1B2A"/>
+        </svg>
+        <div class="pose-label">Perfil</div>
+        <div class="pose-hint">De lado, postura natural, sem forçar a barriga</div>
+      </div>
+
+      <!-- Costas -->
+      <div class="pose">
+        <svg viewBox="0 0 80 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="15" r="12" fill="#7C1B2A"/>
+          <rect x="26" y="30" width="28" height="40" rx="6" fill="#7C1B2A"/>
+          <rect x="10" y="32" width="14" height="30" rx="5" fill="#7C1B2A"/>
+          <rect x="56" y="32" width="14" height="30" rx="5" fill="#7C1B2A"/>
+          <rect x="27" y="70" width="12" height="40" rx="5" fill="#7C1B2A"/>
+          <rect x="41" y="70" width="12" height="40" rx="5" fill="#7C1B2A"/>
+          <!-- seta indicando costas -->
+          <path d="M40 -6 A20 20 0 0 1 80 -6" stroke="#7C1B2A" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M80 -6 L73 -9 M80 -6 L75 0" stroke="#7C1B2A" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+        <div class="pose-label">Costas</div>
+        <div class="pose-hint">De costas, mesma distância das outras duas</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== ENVIAR FOTOS ===== -->
+  <div class="card" id="uploadCard">
+    <h2>Enviar suas fotos</h2>
+    <p>Preencha seu nome e envie as três fotos abaixo. Você pode <strong>tirar a foto na hora</strong> (câmera) ou <strong>escolher uma já salva</strong> na galeria.</p>
+
+    <!-- Nome -->
+    <div class="field">
+      <label class="flabel" for="nomeAluno">Nome completo</label>
+      <input type="text" id="nomeAluno" placeholder="Seu nome (igual ao da ficha de avaliação)" autocomplete="name">
+      <div class="aviso-nome" id="avisoNomeNaoEncontrado">
+        ⚠️ Não encontramos esse nome cadastrado. Confira se digitou exatamente como na sua ficha de avaliação — assim suas fotos aparecem certinho no histórico.
+      </div>
+    </div>
+
+    <!-- Foto de Frente -->
+    <div class="field">
+      <label class="flabel">Foto de frente</label>
+      <div class="foto-opcoes">
+        <!-- Câmera -->
+        <button type="button" class="btn-opcao" onclick="document.getElementById('fotoFrenteCamera').click()">
+          <span class="emoji">📷</span>
+          Tirar foto agora
+        </button>
+        <input type="file" id="fotoFrenteCamera" accept="image/*" capture="environment" style="display:none;" data-preview="previewFrente" data-input-group="frente">
+
+        <!-- Galeria -->
+        <button type="button" class="btn-opcao" onclick="document.getElementById('fotoFrenteGaleria').click()">
+          <span class="emoji">🖼️</span>
+          Escolher da galeria
+        </button>
+        <input type="file" id="fotoFrenteGaleria" accept="image/*" style="display:none;" data-preview="previewFrente" data-input-group="frente">
+      </div>
+      <div class="foto-preview" id="previewFrente">
+        <img src="" alt="Preview frente">
+        <div class="preview-info">
+          <span class="preview-nome" id="nomeFrente"></span>
+          <button type="button" class="preview-remover" data-group="frente">✕ Remover</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Foto de Perfil -->
+    <div class="field">
+      <label class="flabel">Foto de perfil (de lado)</label>
+      <div class="foto-opcoes">
+        <button type="button" class="btn-opcao" onclick="document.getElementById('fotoPerfilCamera').click()">
+          <span class="emoji">📷</span>
+          Tirar foto agora
+        </button>
+        <input type="file" id="fotoPerfilCamera" accept="image/*" capture="environment" style="display:none;" data-preview="previewPerfil" data-input-group="perfil">
+
+        <button type="button" class="btn-opcao" onclick="document.getElementById('fotoPerfilGaleria').click()">
+          <span class="emoji">🖼️</span>
+          Escolher da galeria
+        </button>
+        <input type="file" id="fotoPerfilGaleria" accept="image/*" style="display:none;" data-preview="previewPerfil" data-input-group="perfil">
+      </div>
+      <div class="foto-preview" id="previewPerfil">
+        <img src="" alt="Preview perfil">
+        <div class="preview-info">
+          <span class="preview-nome" id="nomePerfil"></span>
+          <button type="button" class="preview-remover" data-group="perfil">✕ Remover</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Foto de Costas -->
+    <div class="field">
+      <label class="flabel">Foto de costas</label>
+      <div class="foto-opcoes">
+        <button type="button" class="btn-opcao" onclick="document.getElementById('fotoCostasCamera').click()">
+          <span class="emoji">📷</span>
+          Tirar foto agora
+        </button>
+        <input type="file" id="fotoCostasCamera" accept="image/*" capture="environment" style="display:none;" data-preview="previewCostas" data-input-group="costas">
+
+        <button type="button" class="btn-opcao" onclick="document.getElementById('fotoCostasGaleria').click()">
+          <span class="emoji">🖼️</span>
+          Escolher da galeria
+        </button>
+        <input type="file" id="fotoCostasGaleria" accept="image/*" style="display:none;" data-preview="previewCostas" data-input-group="costas">
+      </div>
+      <div class="foto-preview" id="previewCostas">
+        <img src="" alt="Preview costas">
+        <div class="preview-info">
+          <span class="preview-nome" id="nomeCostas"></span>
+          <button type="button" class="preview-remover" data-group="costas">✕ Remover</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Erro -->
+    <div class="error-msg" id="erroEnvio">Preencha seu nome e selecione pelo menos uma foto antes de enviar.</div>
+
+    <!-- Botão de envio -->
+    <div class="cta-wrap">
+      <button type="button" class="btn" id="btnEnviarFotos">Enviar fotos</button>
+    </div>
+
+    <!-- Confirmação (aparece após envio) -->
+    <div id="confirmacaoEnvio" class="estado-sucesso hidden">
+      <div class="selo">✓</div>
+      <p style="font-size:1rem; font-weight:600; color: var(--verde); margin:0 0 6px;">Fotos enviadas com sucesso!</p>
+      <p style="font-size:.88rem; color: var(--ink-soft);">A Cássia vai analisar e te dará um retorno em breve. 💪</p>
+    </div>
+  </div>
+
+  <div class="footnote" style="margin-top:1.8rem;">
+    Ainda não preencheu sua ficha de avaliação? <a href="https://cassiarodriguespersonal-ui.github.io/crm-cassia/anamnese.html" style="color:var(--accent); font-weight:600;">Acesse aqui</a>.
+  </div>
+  <div class="footnote">Suas fotos ficam guardadas com privacidade, acessíveis apenas pela Cássia.</div>
+
+</div><!-- /wrap -->
+
+<!-- Rodapé slogan -->
+<footer class="slogan-rodape">
+  <div class="slogan-linha"></div>
+  <blockquote class="slogan-texto">&ldquo;A evolução não acontece por acaso. Ela nasce da presença constante, de um método bem construído e da valorização de cada conquista, cada dificuldade e cada pessoa.&rdquo;</blockquote>
+  <p class="slogan-assinatura">Cássia Rodrigues</p>
+</footer>
+
+<iframe name="hiddenFrame" id="hiddenFrame" style="display:none;" title="envio em segundo plano"></iframe>
+
+<script>
+(function(){
+  var GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwxfWT6FzUK0wD_FiS9yPA6Fxp_2pg2Fox4vffOfd2wAiajbcjLMvJ5ggG1NxkuCFX8/exec";
+
+  // ========== ARQUIVOS SELECIONADOS (por grupo) ==========
+  var arquivos = { frente: null, perfil: null, costas: null };
+
+  // ========== PREVIEW ==========
+  function configurarInput(inputEl){
+    inputEl.addEventListener('change', function(){
+      var file = inputEl.files && inputEl.files[0];
+      var grupo = inputEl.dataset.inputGroup;
+      if(!file){ return; }
+
+      arquivos[grupo] = file;
+
+      var previewId = inputEl.dataset.preview;
+      var preview = document.getElementById(previewId);
+      var img = preview.querySelector('img');
+      var nomeEl = document.getElementById('nome' + grupo.charAt(0).toUpperCase() + grupo.slice(1));
+
+      var reader = new FileReader();
+      reader.onload = function(e){
+        img.src = e.target.result;
+        if(nomeEl) nomeEl.textContent = file.name;
+        preview.classList.add('show');
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  ['fotoFrenteCamera','fotoFrenteGaleria',
+   'fotoPerfilCamera','fotoPerfilGaleria',
+   'fotoCostasCamera','fotoCostasGaleria'].forEach(function(id){
+    configurarInput(document.getElementById(id));
+  });
+
+  // ========== BOTÕES REMOVER ==========
+  document.querySelectorAll('.preview-remover').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var grupo = btn.dataset.group;
+      arquivos[grupo] = null;
+      var preview = document.getElementById('preview' + grupo.charAt(0).toUpperCase() + grupo.slice(1));
+      preview.classList.remove('show');
+      preview.querySelector('img').src = '';
+      // limpar inputs
+      ['Camera','Galeria'].forEach(function(tipo){
+        var inputId = 'foto' + grupo.charAt(0).toUpperCase() + grupo.slice(1) + tipo;
+        var el = document.getElementById(inputId);
+        if(el) el.value = '';
+      });
+    });
+  });
+
+  // ========== DRAG OVER nas zonas (visual) ==========
+  document.querySelectorAll('.zona-upload').forEach(function(zona){
+    zona.addEventListener('dragover', function(e){ e.preventDefault(); zona.classList.add('drag'); });
+    zona.addEventListener('dragleave', function(){ zona.classList.remove('drag'); });
+    zona.addEventListener('drop', function(e){
+      e.preventDefault();
+      zona.classList.remove('drag');
+    });
+  });
+
+  // ========== VALIDAÇÃO DE NOME ==========
+  var NOMES_CADASTRADOS = null;
+  (function carregarNomes(){
+    var cb = '__fotosNomesCallback';
+    window[cb] = function(dados){
+      NOMES_CADASTRADOS = dados.map(function(a){ return String(a['Nome']||'').trim().toLowerCase(); });
+    };
+    var tag = document.createElement('script');
+    tag.src = GOOGLE_SHEETS_URL + '?callback=' + cb;
+    tag.onerror = function(){ NOMES_CADASTRADOS = false; };
+    document.body.appendChild(tag);
+  })();
+
+  document.getElementById('nomeAluno').addEventListener('blur', function(){
+    var aviso = document.getElementById('avisoNomeNaoEncontrado');
+    var nome = this.value.trim().toLowerCase();
+    if(!nome || !Array.isArray(NOMES_CADASTRADOS)){ aviso.classList.remove('show'); return; }
+    aviso.classList.toggle('show', NOMES_CADASTRADOS.indexOf(nome) === -1);
+  });
+
+  // ========== COMPRESSÃO ==========
+  function comprimirImagem(file, maxDim, qualidade){
+    return new Promise(function(resolve){
+      if(!file){ resolve(null); return; }
+      var reader = new FileReader();
+      reader.onload = function(e){
+        var img = new Image();
+        img.onload = function(){
+          var w = img.width, h = img.height;
+          if(w > h && w > maxDim){ h = Math.round(h*(maxDim/w)); w = maxDim; }
+          else if(h >= w && h > maxDim){ w = Math.round(w*(maxDim/h)); h = maxDim; }
+          var canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', qualidade).split(',')[1]);
+        };
+        img.onerror = function(){ resolve(null); };
+        img.src = e.target.result;
+      };
+      reader.onerror = function(){ resolve(null); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ========== ENVIO ==========
+  function enviarParaPlanilha(dados){
+    var form = document.createElement('form');
+    form.method = 'POST';
+    form.action = GOOGLE_SHEETS_URL;
+    form.target = 'hiddenFrame';
+    form.style.display = 'none';
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'payload';
+    input.value = JSON.stringify(dados);
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    setTimeout(function(){ if(form.parentNode) form.parentNode.removeChild(form); }, 1500);
+  }
+
+  document.getElementById('btnEnviarFotos').addEventListener('click', function(){
+    var btn = this;
+    var nome = document.getElementById('nomeAluno').value.trim();
+    var fFrente = arquivos.frente;
+    var fPerfil = arquivos.perfil;
+    var fCostas = arquivos.costas;
+    var erro = document.getElementById('erroEnvio');
+
+    if(!nome || (!fFrente && !fPerfil && !fCostas)){
+      erro.classList.add('show');
+      return;
+    }
+    erro.classList.remove('show');
+
+    if(Array.isArray(NOMES_CADASTRADOS) && NOMES_CADASTRADOS.indexOf(nome.toLowerCase()) === -1){
+      var ok = window.confirm(
+        'Não encontramos "' + nome + '" cadastrado no sistema.\n' +
+        'Confira se digitou seu nome exatamente como está na sua ficha.\n\n' +
+        'Clique OK para enviar assim mesmo, ou Cancelar para corrigir.'
+      );
+      if(!ok) return;
+    }
+
+    var faltando = [!fFrente && 'frente', !fPerfil && 'perfil', !fCostas && 'costas'].filter(Boolean);
+    if(faltando.length > 0 && faltando.length < 3){
+      var cont = window.confirm(
+        'Faltou a foto de ' + faltando.join(' e ') + '.\n' +
+        'Quer enviar só as que já selecionou?\n\n' +
+        'OK = enviar assim mesmo  |  Cancelar = voltar e completar'
+      );
+      if(!cont) return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando…';
+
+    Promise.all([
+      comprimirImagem(fFrente, 1100, 0.78),
+      comprimirImagem(fPerfil, 1100, 0.78),
+      comprimirImagem(fCostas, 1100, 0.78)
+    ]).then(function(resultados){
+      enviarParaPlanilha({
+        tipo: 'fotos_separadas',
+        nome: nome,
+        fotoFrenteBase64: resultados[0],
+        fotoPerfilBase64: resultados[1],
+        fotoCostasBase64: resultados[2]
+      });
+      // ocultar campos, mostrar confirmação
+      document.getElementById('uploadCard').querySelectorAll('.field, .cta-wrap').forEach(function(el){
+        el.classList.add('hidden');
+      });
+      document.getElementById('confirmacaoEnvio').classList.remove('hidden');
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
