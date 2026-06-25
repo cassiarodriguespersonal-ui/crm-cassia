@@ -1494,6 +1494,25 @@ function renderTabFinanceiro(a, g) {
       dataNascimento: dataNascimento,
       etiquetas: etiquetasAtuais.join(', ')
     };
+
+    // Se o pagamento está sendo marcado como Pago, pergunta o mês de referência
+    // para registrar no histórico. Cancela o salvamento se não confirmar.
+    if (pagamento === 'Pago' && g.pagamento !== 'Pago') {
+      const hoje = new Date();
+      const mesAtual = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
+      const resposta = prompt(
+        'Qual mês/ano está sendo pago?\n(formato: AAAA-MM, ex: ' + mesAtual + ')',
+        mesAtual
+      );
+      if (resposta === null) return; // usuário cancelou
+      const mesRef = resposta.trim();
+      if (!/^\d{4}-\d{2}$/.test(mesRef)) {
+        mostrarToast('Formato inválido. Use AAAA-MM (ex: ' + mesAtual + ').');
+        return;
+      }
+      dados.mesReferenciaPagamento = mesRef;
+    }
+
     Api.salvarGestaoAluna(dados).then(function () {
       a.gestao = dados;
       a['Data de Nascimento'] = dataNascimento;
