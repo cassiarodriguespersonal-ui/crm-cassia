@@ -369,6 +369,60 @@ function renderDashboard() {
     return '<div class="stat-card ' + s[3] + '"><span class="stat-icon">' + s[2] + '</span><div class="num">' + s[0] + '</div><div class="lbl">' + s[1] + '</div></div>';
   }).join('');
 
+  // ---- Saúde do negócio ----
+  (function () {
+    var ativasArr = visiveis.filter(function (a) { return gestaoDe(a).status !== 'Inativo'; });
+    var totalAtivas = ativasArr.length;
+
+    // Fatura mensal projetada: soma dos valores de alunas ativas com pagamento em dia
+    var faturaProjetada = ativasArr.reduce(function (soma, a) {
+      var g = gestaoDe(a);
+      if (g.pagamento !== 'Devendo') soma += parseFloat(g.valor) || 0;
+      return soma;
+    }, 0);
+
+    // Receita confirmada nos últimos 3 meses: lê historicoPagamentos (registrado desde a última atualização)
+    var tresMesesAtras = new Date();
+    tresMesesAtras.setDate(tresMesesAtras.getDate() - 90);
+    var receitaConfirmada = 0;
+    visiveis.forEach(function (a) {
+      var g = gestaoDe(a);
+      var valorAluna = parseFloat(g.valor) || 0;
+      (a.historicoPagamentos || []).forEach(function (h) {
+        if (String(h['Status']) === 'Pago') {
+          var dataReg = new Date(h['Data do Registro']);
+          if (!isNaN(dataReg.getTime()) && dataReg >= tresMesesAtras) {
+            receitaConfirmada += valorAluna;
+          }
+        }
+      });
+    });
+
+    // Taxa de retenção: alunas ativas com check-in nos últimos 30 dias ÷ total de ativas
+    var retidas = totalAtivas > 0 ? ativasArr.filter(function (a) {
+      var dias = a.ultimoCheckin ? diasDesde(a.ultimoCheckin['Data/Hora']) : null;
+      return dias !== null && dias <= 30;
+    }).length : 0;
+    var taxaRetencao = totalAtivas > 0 ? Math.round((retidas / totalAtivas) * 100) : null;
+
+    // Média de check-ins por aluna ativa
+    var totalCheckins = ativasArr.reduce(function (soma, a) { return soma + (a.checkins ? a.checkins.length : 0); }, 0);
+    var mediaCheckins = totalAtivas > 0 ? (totalCheckins / totalAtivas).toFixed(1) : '—';
+
+    var semHistorico = visiveis.every(function (a) { return !(a.historicoPagamentos && a.historicoPagamentos.length); });
+    var receitaStr = semHistorico
+      ? '<span title="Disponível após o primeiro pagamento confirmado com mês de referência" style="cursor:help;">—</span>'
+      : 'R$ ' + receitaConfirmada.toFixed(2).replace('.', ',');
+
+    var el = document.getElementById('dashboardNegocio');
+    if (!el) return;
+    el.innerHTML =
+      '<div class="stat-card tom-bom"><span class="stat-icon">💰</span><div class="num">R$ ' + faturaProjetada.toFixed(2).replace('.', ',') + '</div><div class="lbl">Fatura mensal projetada</div></div>' +
+      '<div class="stat-card tom-neutro"><span class="stat-icon">📊</span><div class="num">' + receitaStr + '</div><div class="lbl">Receita confirmada (90 dias)</div></div>' +
+      '<div class="stat-card ' + (taxaRetencao !== null && taxaRetencao < 70 ? 'tom-atencao' : 'tom-bom') + '"><span class="stat-icon">🔄</span><div class="num">' + (taxaRetencao !== null ? taxaRetencao + '%' : '—') + '</div><div class="lbl">Retenção (check-in 30d)</div></div>' +
+      '<div class="stat-card tom-neutro"><span class="stat-icon">💬</span><div class="num">' + mediaCheckins + '</div><div class="lbl">Média de check-ins / aluna</div></div>';
+  }());
+
   // ---- Saudação ----
   const hora = new Date().getHours();
   const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite';
