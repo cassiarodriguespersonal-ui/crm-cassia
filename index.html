@@ -251,20 +251,50 @@
       <section class="section" id="section-ferramentas">
         <div class="panel" id="painelCompartilhar">
           <span class="eyebrow">Atalhos rápidos</span><h2>Compartilhar com novas alunas</h2>
+
+          <!-- Links rápidos (só o link, sem texto de mensagem) -->
+          <div style="margin-bottom:1.2rem;">
+            <div style="font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:.55rem;">Links rápidos</div>
+            <div style="display:flex; flex-direction:column; gap:.5rem;">
+              <div style="display:flex; align-items:center; gap:.5rem; background:var(--paper-soft); border:1px solid var(--line); border-radius:var(--radius-sm); padding:.45rem .75rem;">
+                <span style="font-size:.82rem; color:var(--ink-soft); white-space:nowrap;">📋 Ficha</span>
+                <span id="linkRapidoFicha" style="flex:1; font-size:.8rem; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+                <button class="btn btn-sm" id="btnCopiarLinkFicha" style="flex-shrink:0; padding:.25rem .6rem; font-size:.78rem;">Copiar</button>
+              </div>
+              <div style="display:flex; align-items:center; gap:.5rem; background:var(--paper-soft); border:1px solid var(--line); border-radius:var(--radius-sm); padding:.45rem .75rem;">
+                <span style="font-size:.82rem; color:var(--ink-soft); white-space:nowrap;">📸 Fotos</span>
+                <span id="linkRapidoFotos" style="flex:1; font-size:.8rem; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+                <button class="btn btn-sm" id="btnCopiarLinkFotos" style="flex-shrink:0; padding:.25rem .6rem; font-size:.78rem;">Copiar</button>
+              </div>
+              <div style="display:flex; align-items:center; gap:.5rem; background:var(--paper-soft); border:1px solid var(--line); border-radius:var(--radius-sm); padding:.45rem .75rem;">
+                <span style="font-size:.82rem; color:var(--ink-soft); white-space:nowrap;">✅ Check-in</span>
+                <span id="linkRapidoCheckin" style="flex:1; font-size:.8rem; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+                <button class="btn btn-sm" id="btnCopiarLinkCheckin" style="flex-shrink:0; padding:.25rem .6rem; font-size:.78rem;">Copiar</button>
+              </div>
+              <div style="display:flex; align-items:center; gap:.5rem; background:var(--paper-soft); border:1px solid var(--line); border-radius:var(--radius-sm); padding:.45rem .75rem;">
+                <span style="font-size:.82rem; color:var(--ink-soft); white-space:nowrap;">📄 Contrato</span>
+                <span id="linkRapidoContrato" style="flex:1; font-size:.8rem; color:var(--ink-faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
+                <button class="btn btn-sm" id="btnCopiarLinkContrato" style="flex-shrink:0; padding:.25rem .6rem; font-size:.78rem;">Copiar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Textos de mensagem completos -->
+          <div style="font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:.55rem;">Texto + link (para colar no WhatsApp)</div>
           <div class="form-grid">
             <div class="form-field">
-              <label>Texto para a ficha de avaliação</label>
+              <label>Ficha de avaliação</label>
               <textarea id="textoApresentarFicha"></textarea>
               <button class="btn btn-accent btn-sm" id="btnCopiarFicha" style="margin-top:.6rem;">📋 Copiar texto + link</button>
             </div>
             <div class="form-field">
-              <label>Texto para o guia de fotos</label>
+              <label>Guia de fotos</label>
               <textarea id="textoApresentarFotos"></textarea>
               <button class="btn btn-accent btn-sm" id="btnCopiarFotos" style="margin-top:.6rem;">📋 Copiar texto + link</button>
             </div>
             <div class="form-field">
-              <label>Texto para o termo de compromisso</label>
-              <textarea id="textoApresentarContrato"></textarea>
+              <label>Contrato</label>
+              <textarea id="textoApresentarContrato" placeholder="Mensagem de apresentação do contrato..."></textarea>
               <button class="btn btn-accent btn-sm" id="btnCopiarContrato" style="margin-top:.6rem;">📋 Copiar texto + link</button>
             </div>
           </div>
@@ -374,7 +404,7 @@
         </div>
         <div class="panel">
           <span class="eyebrow">Segurança</span><h2>Backup das fotos</h2>
-          <p style="color:var(--ink-soft); font-size:.86rem;">As fotos das alunas ficam numa pasta separada do Drive e não eram cobertas pelo backup da planilha. Configure um segundo gatilho de tempo, semanal, pra função <code>criarBackupFotosSemanal</code>. Mantém as últimas 4 cópias (um mês de histórico).</p>
+          <p style="color:var(--ink-soft); font-size:.86rem;">As fotos das alunas ficam numa pasta separada do Drive. Configure um gatilho de tempo semanal para a função <code>criarBackupFotosSemanal</code> no Apps Script. Todas as cópias são mantidas indefinidamente — nenhuma é apagada automaticamente.</p>
           <button class="btn btn-accent" id="btnBackupFotosAgora" style="margin-top:.6rem;">🖼️ Fazer backup das fotos agora</button>
         </div>
         <div class="panel">

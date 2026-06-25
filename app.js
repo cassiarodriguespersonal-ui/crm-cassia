@@ -15,6 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
   ligarModalNovaAluna();
   mostrarSecao('dashboard');
   carregarDados();
+
+  // Atualização automática silenciosa a cada 5 minutos.
+  // Usa forcarAtualizacao=true para ignorar o cache do Apps Script e
+  // garantir que os dados refletem o estado real da planilha.
+  setInterval(function () {
+    carregarDados(true);
+  }, 5 * 60 * 1000);
 });
 
 function ligarNavegacao() {
@@ -653,8 +660,22 @@ function renderTarefas(visiveis) {
    COMPARTILHAR COM NOVAS ALUNAS (atalho no Dashboard)
    ============================================================ */
 function renderCompartilhar() {
+  // Textos de mensagem
   document.getElementById('textoApresentarFicha').value = CONFIG.modelosWhatsapp.apresentarFicha || '';
   document.getElementById('textoApresentarFotos').value = CONFIG.modelosWhatsapp.apresentarGuiaFotos || '';
+  document.getElementById('textoApresentarContrato').value = CONFIG.modelosWhatsapp.apresentarContrato || 'Oi! Antes de começarmos, preciso que você leia e aceite o contrato: ';
+
+  // Links rápidos
+  var linksRapidos = [
+    { spanId: 'linkRapidoFicha',    valor: CONFIG.linkFicha },
+    { spanId: 'linkRapidoFotos',    valor: CONFIG.linkGuiaFotos },
+    { spanId: 'linkRapidoCheckin',  valor: CONFIG.linkCheckin },
+    { spanId: 'linkRapidoContrato', valor: CONFIG.linkContrato }
+  ];
+  linksRapidos.forEach(function (l) {
+    var el = document.getElementById(l.spanId);
+    if (el) el.textContent = l.valor || '—';
+  });
 }
 
 const ROTULOS_MODELO_WHATS = { boasVindas: 'Boas-vindas', lembreteSemanal: 'Lembrete semanal', solicitarCheckin: 'Pedir check-in', solicitarFotos: 'Pedir fotos', lembretePagamento: 'Lembrete de pagamento', motivacao: 'Motivação' };
@@ -829,6 +850,21 @@ function copiaAlternativa(texto, callback) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  // ── Links rápidos (copia só o link) ──────────────────────────────────────
+  [
+    { btnId: 'btnCopiarLinkFicha',    getLink: function () { return CONFIG.linkFicha; },    toast: 'Link da ficha copiado!' },
+    { btnId: 'btnCopiarLinkFotos',    getLink: function () { return CONFIG.linkGuiaFotos; }, toast: 'Link do guia de fotos copiado!' },
+    { btnId: 'btnCopiarLinkCheckin',  getLink: function () { return CONFIG.linkCheckin; },  toast: 'Link do check-in copiado!' },
+    { btnId: 'btnCopiarLinkContrato', getLink: function () { return CONFIG.linkContrato; }, toast: 'Link do contrato copiado!' }
+  ].forEach(function (item) {
+    var btn = document.getElementById(item.btnId);
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      copiarParaAreaDeTransferencia(item.getLink() || '', function () { mostrarToast(item.toast); });
+    });
+  });
+
+  // ── Texto + link (copia mensagem completa) ────────────────────────────────
   document.getElementById('btnCopiarFicha').addEventListener('click', function () {
     CONFIG.modelosWhatsapp.apresentarFicha = document.getElementById('textoApresentarFicha').value;
     salvarConfig(CONFIG);
@@ -840,6 +876,12 @@ document.addEventListener('DOMContentLoaded', function () {
     salvarConfig(CONFIG);
     const texto = CONFIG.modelosWhatsapp.apresentarGuiaFotos + CONFIG.linkGuiaFotos;
     copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do guia de fotos copiado!'); });
+  });
+  document.getElementById('btnCopiarContrato').addEventListener('click', function () {
+    CONFIG.modelosWhatsapp.apresentarContrato = document.getElementById('textoApresentarContrato').value;
+    salvarConfig(CONFIG);
+    const texto = (CONFIG.modelosWhatsapp.apresentarContrato || '') + CONFIG.linkContrato;
+    copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do contrato copiado!'); });
   });
 });
 
