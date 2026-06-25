@@ -19,7 +19,7 @@ const CONFIG_PADRAO = {
 
   // Links das páginas que as alunas usam (hospedadas no mesmo repositório do GitHub).
   linkFicha: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/anamnese.html",
-  linkGuiaFotos: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/fotos.html",
+  linkGuiaFotos: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/guia-fotos.html",
   linkCheckin: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/checkin.html",
   linkContrato: "https://cassiarodriguespersonal-ui.github.io/crm-cassia/contrato.html",
 
@@ -36,7 +36,7 @@ const CONFIG_PADRAO = {
     apresentarGuiaFotos: "Oi! Para completar sua avaliação, preencha o guia rápido de fotos de progresso: ",
     apresentarCheckin: "Oi! Está na hora do seu check-in semanal. Leva menos de um minuto: ",
     boasVindas: "Oi, {nome}! Que bom ter você como aluna. Estou à disposição para qualquer dúvida nessa fase inicial. Vamos juntas! 💪",
-    lembreteSemanal: "Oi, {nome}! Passando para saber como foi sua semana de treino. Pode me contar por aqui ou preencher o check-in: " ,
+    lembreteSemanal: "Oi, {nome}! Passando para saber como foi sua semana de treino. Pode me contar por aqui ou preencher o check-in: ",
     solicitarCheckin: "Oi, {nome}! Está na hora do seu check-in semanal. Leva menos de um minuto: ",
     solicitarFotos: "Oi, {nome}! Vamos atualizar suas fotos de avaliação? Aqui está o guia rapidinho de como tirar: ",
     solicitarReavaliacao: "Oi, {nome}! Já faz um tempinho desde sua última avaliação, e acho que está na hora de revisarmos juntas como você está e ajustar o que for preciso no seu treino. Podemos marcar?",
