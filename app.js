@@ -655,6 +655,7 @@ function renderTarefas(visiveis) {
 function renderCompartilhar() {
   document.getElementById('textoApresentarFicha').value = CONFIG.modelosWhatsapp.apresentarFicha || '';
   document.getElementById('textoApresentarFotos').value = CONFIG.modelosWhatsapp.apresentarGuiaFotos || '';
+  document.getElementById('textoApresentarContrato').value = CONFIG.modelosWhatsapp.apresentarContrato || '';
 }
 
 const ROTULOS_MODELO_WHATS = { boasVindas: 'Boas-vindas', lembreteSemanal: 'Lembrete semanal', solicitarCheckin: 'Pedir check-in', solicitarFotos: 'Pedir fotos', lembretePagamento: 'Lembrete de pagamento', motivacao: 'Motivação' };
@@ -840,6 +841,12 @@ document.addEventListener('DOMContentLoaded', function () {
     salvarConfig(CONFIG);
     const texto = CONFIG.modelosWhatsapp.apresentarGuiaFotos + CONFIG.linkGuiaFotos;
     copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do guia de fotos copiado!'); });
+  });
+  document.getElementById('btnCopiarContrato').addEventListener('click', function () {
+    CONFIG.modelosWhatsapp.apresentarContrato = document.getElementById('textoApresentarContrato').value;
+    salvarConfig(CONFIG);
+    const texto = CONFIG.modelosWhatsapp.apresentarContrato + CONFIG.linkContrato;
+    copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do termo de compromisso copiado!'); });
   });
 });
 
