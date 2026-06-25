@@ -1497,8 +1497,36 @@ function renderTabFinanceiro(a, g) {
         '<button type="button" class="btn btn-sm" id="btnAdicionarEtiqueta">+ Adicionar</button>' +
       '</div>' +
     '</div>' +
-    '<button class="btn btn-primary" id="btnSalvarFinanceiro" style="margin-top:1rem;">Salvar</button> ' +
-    '<button class="btn btn-danger" id="btnExcluirAluna">Excluir aluna</button>' +
+    '<div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-top:1rem; align-items:center;">' +
+      '<button class="btn btn-primary" id="btnSalvarFinanceiro">Salvar</button>' +
+      '<button class="btn btn-accent" id="btnRenovarPlano">🔄 Renovar plano</button>' +
+      '<button class="btn btn-sm" id="btnLancarMesPago">➕ Lançar mês anterior</button>' +
+      '<button class="btn btn-danger" id="btnExcluirAluna" style="margin-left:auto;">Excluir aluna</button>' +
+    '</div>' +
+    // Mini-modal inline de renovação (oculto por padrão)
+    '<div id="renovacaoPanel" style="display:none; margin-top:1rem; padding:1rem 1.1rem; background:var(--paper-soft,#F7F4F2); border:1px solid var(--line,rgba(26,23,20,.12)); border-radius:10px;">' +
+      '<div style="font-size:.88rem; font-weight:600; margin-bottom:.8rem; color:var(--ink);">🔄 Renovar plano de ' + primeiroNome(a['Nome']) + '</div>' +
+      '<div class="form-grid" style="grid-template-columns:1fr 1fr; gap:.7rem;">' +
+        '<div class="form-field">' +
+          '<label>Avançar quantos dias?</label>' +
+          '<div style="display:flex; gap:.35rem; flex-wrap:wrap; margin-bottom:.4rem;">' +
+            '<button type="button" class="btn btn-sm dias-rapido" data-dias="30">30d</button>' +
+            '<button type="button" class="btn btn-sm dias-rapido" data-dias="60">60d</button>' +
+            '<button type="button" class="btn btn-sm dias-rapido" data-dias="90">90d</button>' +
+            '<button type="button" class="btn btn-sm dias-rapido" data-dias="180">180d</button>' +
+          '</div>' +
+          '<input type="number" id="renovDias" placeholder="Ou digite aqui..." min="1" max="730">' +
+        '</div>' +
+        '<div class="form-field">' +
+          '<label>Mês de referência do pagamento</label>' +
+          '<input type="month" id="renovMes">' +
+        '</div>' +
+      '</div>' +
+      '<div style="display:flex; gap:.5rem; margin-top:.8rem;">' +
+        '<button class="btn btn-primary" id="btnConfirmarRenovacao">✓ Confirmar renovação</button>' +
+        '<button class="btn btn-ghost" id="btnCancelarRenovacao">Cancelar</button>' +
+      '</div>' +
+    '</div>' +
     (function () {
       var historico = a.historicoPagamentos || [];
       if (!historico.length) {
@@ -1534,6 +1562,146 @@ function renderTabFinanceiro(a, g) {
     if (etiquetasAtuais.indexOf(valor) === -1) etiquetasAtuais.push(valor);
     campo.value = '';
     renderChipsEtiquetas();
+  });
+
+
+  // ── RENOVAÇÃO DE PLANO ────────────────────────────────────────────────────
+  document.getElementById('btnRenovarPlano').addEventListener('click', function () {
+    const painel = document.getElementById('renovacaoPanel');
+    painel.style.display = painel.style.display === 'none' ? 'block' : 'none';
+    if (painel.style.display === 'block') {
+      // Pré-preenche o mês com o mês atual
+      const hoje = new Date();
+      document.getElementById('renovMes').value = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
+      // Pré-preenche os dias com base na próxima renovação atual (se existir)
+      document.getElementById('renovDias').value = '';
+    }
+  });
+
+  document.getElementById('btnCancelarRenovacao').addEventListener('click', function () {
+    document.getElementById('renovacaoPanel').style.display = 'none';
+  });
+
+  // Botões rápidos de dias
+  document.getElementById('renovacaoPanel').querySelectorAll('.dias-rapido').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.getElementById('renovDias').value = btn.getAttribute('data-dias');
+      document.getElementById('renovacaoPanel').querySelectorAll('.dias-rapido').forEach(function (b) { b.classList.remove('btn-accent'); });
+      btn.classList.add('btn-accent');
+    });
+  });
+
+  document.getElementById('btnConfirmarRenovacao').addEventListener('click', function () {
+    const diasStr = document.getElementById('renovDias').value.trim();
+    const mesRef = document.getElementById('renovMes').value.trim();
+
+    const dias = parseInt(diasStr, 10);
+    if (!dias || dias < 1 || dias > 730) {
+      mostrarToast('Informe quantos dias avançar (1 a 730).');
+      return;
+    }
+    if (!/^\d{4}-\d{2}$/.test(mesRef)) {
+      mostrarToast('Selecione o mês de referência.');
+      return;
+    }
+
+    // Calcular nova data de renovação
+    const g = gestaoDe(a);
+    const baseDate = g.proximaRenovacao ? new Date(g.proximaRenovacao + 'T00:00:00') : new Date();
+    // Se a data base já passou, usa hoje como base
+    const hoje = new Date();
+    const dataBase = baseDate < hoje ? hoje : baseDate;
+    dataBase.setDate(dataBase.getDate() + dias);
+    const novaData = dataBase.getFullYear() + '-' + String(dataBase.getMonth() + 1).padStart(2, '0') + '-' + String(dataBase.getDate()).padStart(2, '0');
+
+    // Lê os campos atuais do formulário para não perder nada
+    const elTab = document.getElementById('tab-financeiro');
+    const dados = {
+      nome: a['Nome'],
+      telefone: a['Telefone'] || '',
+      status: (elTab.querySelector('#fStatus') || {}).value || g.status,
+      pagamento: 'Pago',
+      plano: (elTab.querySelector('#fPlano') || {}).value || g.plano || '—',
+      valor: (elTab.querySelector('#fValor') || {}).value || g.valor,
+      proximaRenovacao: novaData,
+      arquivado: (elTab.querySelector('#fArquivado') || {}).value || g.arquivado,
+      dataNascimento: (elTab.querySelector('#fNascimento') || {}).value || '',
+      etiquetas: etiquetasAtuais.join(', '),
+      mesReferenciaPagamento: mesRef
+    };
+
+    Api.salvarGestaoAluna(dados).then(function () {
+      a.gestao = dados;
+      // Atualizar histórico em memória
+      if (!a.historicoPagamentos) a.historicoPagamentos = [];
+      a.historicoPagamentos.unshift({
+        'Nome': a['Nome'],
+        'Mês/Ano': mesRef,
+        'Status': 'Pago',
+        'Data do Registro': new Date().toISOString()
+      });
+      mostrarToast('✓ Plano renovado! Próxima renovação: ' + formatarData(novaData));
+      renderTabFinanceiro(a, dados);
+      if (typeof renderAlunas === 'function') renderAlunas();
+      if (typeof renderDashboard === 'function') renderDashboard();
+    });
+  });
+
+  // ── LANÇAR MÊS ANTERIOR (retroativo) ──────────────────────────────────────
+  document.getElementById('btnLancarMesPago').addEventListener('click', function () {
+    const hoje = new Date();
+    const mesAnterior = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+    const sugestao = mesAnterior.getFullYear() + '-' + String(mesAnterior.getMonth() + 1).padStart(2, '0');
+    const resposta = prompt(
+      'Qual mês/ano lançar como pago? (formato: AAAA-MM, ex: ' + sugestao + ')',
+      sugestao
+    );
+    if (resposta === null) return;
+    const mesRef = resposta.trim();
+    if (!/^\d{4}-\d{2}$/.test(mesRef)) {
+      mostrarToast('Formato inválido. Use AAAA-MM (ex: ' + sugestao + ').');
+      return;
+    }
+
+    // Verifica se já existe no histórico
+    const existente = (a.historicoPagamentos || []).find(function (h) { return String(h['Mês/Ano']) === mesRef; });
+    if (existente) {
+      mostrarToast('⚠️ ' + mesRef + ' já está no histórico.');
+      return;
+    }
+
+    // Envia apenas o mês retroativo — sem alterar status, pagamento ou renovação
+    const g = gestaoDe(a);
+    const elTab = document.getElementById('tab-financeiro');
+    const dados = {
+      nome: a['Nome'],
+      telefone: a['Telefone'] || '',
+      status: g.status,
+      pagamento: g.pagamento,
+      plano: g.plano || '—',
+      valor: g.valor,
+      proximaRenovacao: g.proximaRenovacao,
+      arquivado: g.arquivado,
+      dataNascimento: (elTab.querySelector('#fNascimento') || {}).value || '',
+      etiquetas: etiquetasAtuais.join(', '),
+      mesReferenciaPagamento: mesRef
+    };
+
+    Api.salvarGestaoAluna(dados).then(function () {
+      if (!a.historicoPagamentos) a.historicoPagamentos = [];
+      // Insere na posição correta por data
+      a.historicoPagamentos.push({
+        'Nome': a['Nome'],
+        'Mês/Ano': mesRef,
+        'Status': 'Pago',
+        'Data do Registro': new Date().toISOString()
+      });
+      a.historicoPagamentos.sort(function (x, y) {
+        return String(y['Mês/Ano']).localeCompare(String(x['Mês/Ano']));
+      });
+      mostrarToast('✓ ' + mesRef + ' lançado no histórico.');
+      renderTabFinanceiro(a, g);
+    });
   });
 
   document.getElementById('btnSalvarFinanceiro').addEventListener('click', function () {
