@@ -655,7 +655,6 @@ function renderTarefas(visiveis) {
 function renderCompartilhar() {
   document.getElementById('textoApresentarFicha').value = CONFIG.modelosWhatsapp.apresentarFicha || '';
   document.getElementById('textoApresentarFotos').value = CONFIG.modelosWhatsapp.apresentarGuiaFotos || '';
-  document.getElementById('textoApresentarContrato').value = CONFIG.modelosWhatsapp.apresentarContrato || '';
 }
 
 const ROTULOS_MODELO_WHATS = { boasVindas: 'Boas-vindas', lembreteSemanal: 'Lembrete semanal', solicitarCheckin: 'Pedir check-in', solicitarFotos: 'Pedir fotos', lembretePagamento: 'Lembrete de pagamento', motivacao: 'Motivação' };
@@ -841,12 +840,6 @@ document.addEventListener('DOMContentLoaded', function () {
     salvarConfig(CONFIG);
     const texto = CONFIG.modelosWhatsapp.apresentarGuiaFotos + CONFIG.linkGuiaFotos;
     copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do guia de fotos copiado!'); });
-  });
-  document.getElementById('btnCopiarContrato').addEventListener('click', function () {
-    CONFIG.modelosWhatsapp.apresentarContrato = document.getElementById('textoApresentarContrato').value;
-    salvarConfig(CONFIG);
-    const texto = CONFIG.modelosWhatsapp.apresentarContrato + CONFIG.linkContrato;
-    copiarParaAreaDeTransferencia(texto, function () { mostrarToast('Texto do termo de compromisso copiado!'); });
   });
 });
 
@@ -1137,6 +1130,23 @@ function renderTabInteracoes(a) {
   const el = document.getElementById('tab-interacoes');
   const lista = a.interacoes || [];
 
+  // ── BLOCO DE ANOTAÇÕES PESSOAIS ──────────────────────────────────────────
+  // Salvo dentro de gestao para não precisar de nova rota na API.
+  const notaAtual = (gestaoDe(a).notas || '');
+
+  const blocoNotas =
+    '<div style="margin-bottom:1.6rem; padding-bottom:1.4rem; border-bottom:1px solid var(--line-soft);">' +
+      '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:.55rem;">' +
+        '<label style="font-size:.84rem; font-weight:600; color:var(--ink-soft); margin:0;">📌 Minhas anotações sobre ' + primeiroNome(a['Nome']) + '</label>' +
+        '<span id="notaStatus" style="font-size:.72rem; color:var(--ink-faint); transition:opacity .3s;"></span>' +
+      '</div>' +
+      '<textarea id="notasAluna" rows="4" placeholder="Preferências, detalhes pessoais, alertas importantes... Só você vê isso." ' +
+        'style="width:100%; resize:vertical; font-size:.87rem; line-height:1.6; background:var(--paper-soft, #F7F4F2); border:1px solid var(--line, rgba(26,23,20,.10)); border-radius:8px; padding:.7rem .9rem; font-family:inherit; color:var(--ink);">' +
+        notaAtual +
+      '</textarea>' +
+    '</div>';
+
+  // ── HISTÓRICO DE INTERAÇÕES ───────────────────────────────────────────────
   const historico = !lista.length
     ? '<p style="color:var(--ink-soft);">Nenhuma interação registrada ainda.</p>'
     : '<div style="margin-bottom:1.4rem;">' + lista.map(function (i) {
@@ -1149,7 +1159,7 @@ function renderTabInteracoes(a) {
         '</div>';
       }).join('') + '</div>';
 
-  el.innerHTML = historico +
+  el.innerHTML = blocoNotas + historico +
     '<h3 style="font-size:.95rem; margin-bottom:.7rem;">Registrar nova interação</h3>' +
     '<div class="form-grid">' +
       '<div class="form-field"><label>Tipo</label><select id="iTipo">' +
@@ -1163,6 +1173,39 @@ function renderTabInteracoes(a) {
     '</div>' +
     '<button class="btn btn-accent" id="btnRegistrarInteracao">+ Registrar interação</button>';
 
+  // ── SALVAR ANOTAÇÕES (ao sair do campo ou após 1,5s parado) ──────────────
+  const campoNota = document.getElementById('notasAluna');
+  const statusEl  = document.getElementById('notaStatus');
+  let timerNota;
+
+  function salvarNota() {
+    const texto = campoNota.value;
+    if (texto === (gestaoDe(a).notas || '')) return; // nada mudou
+    statusEl.textContent = 'Salvando…';
+    statusEl.style.opacity = '1';
+    const g = gestaoDe(a);
+    const dados = Object.assign({}, g, { nome: a['Nome'], telefone: a['Telefone'] || '', notas: texto });
+    Api.salvarGestaoAluna(dados).then(function () {
+      if (!a.gestao) a.gestao = {};
+      a.gestao.notas = texto;
+      statusEl.textContent = '✓ Salvo';
+      setTimeout(function () { statusEl.style.opacity = '0'; }, 1800);
+    }).catch(function () {
+      statusEl.textContent = '⚠ Erro ao salvar';
+    });
+  }
+
+  campoNota.addEventListener('input', function () {
+    clearTimeout(timerNota);
+    statusEl.textContent = '';
+    timerNota = setTimeout(salvarNota, 1500); // auto-salva 1,5s após parar de digitar
+  });
+  campoNota.addEventListener('blur', function () {
+    clearTimeout(timerNota);
+    salvarNota();
+  });
+
+  // ── REGISTRAR INTERAÇÃO ───────────────────────────────────────────────────
   document.getElementById('btnRegistrarInteracao').addEventListener('click', function () {
     const tipo = document.getElementById('iTipo').value;
     const observacao = document.getElementById('iObservacao').value;
@@ -1478,18 +1521,13 @@ function renderTabAcoes(a) {
   const whats = telefoneParaWhats(a['Telefone']);
   const nome = a['Nome'] || '';
 
-  // Botão WhatsApp — abre conversa e mostra toast idêntico ao das Ferramentas
   function botaoWhats(label, textoBruto) {
     const texto = textoBruto.replace(/\{nome\}/g, primeiroNome(nome));
-    const url = 'https://wa.me/' + whats + '?text=' + encodeURIComponent(texto);
-    return '<button class="btn btn-sm btn-accent" onclick="window.open(\'' + url.replace(/'/g, "\\'") + '\',\'_blank\'); mostrarToast(\'💬 WhatsApp aberto para ' + primeiroNome(nome).replace(/'/g, "\\'") + '!\');">' + label + '</button>';
+    return '<a class="btn btn-sm" target="_blank" href="https://wa.me/' + whats + '?text=' + encodeURIComponent(texto) + '">' + label + '</a>';
   }
-
-  // Botão E-mail — abre cliente de e-mail e mostra toast igual ao do WhatsApp
   function botaoEmail(label, assunto, corpoBruto) {
     const corpo = corpoBruto.replace(/\{nome\}/g, nome);
-    const url = 'mailto:' + (a['E-mail'] || '') + '?subject=' + encodeURIComponent(assunto) + '&body=' + encodeURIComponent(corpo);
-    return '<button class="btn btn-sm btn-accent" onclick="window.location.href=\'' + url.replace(/'/g, "\\'") + '\'; mostrarToast(\'✉️ E-mail aberto para ' + primeiroNome(nome).replace(/'/g, "\\'") + '!\');">' + label + '</button>';
+    return '<a class="btn btn-sm" href="mailto:' + (a['E-mail'] || '') + '?subject=' + encodeURIComponent(assunto) + '&body=' + encodeURIComponent(corpo) + '">' + label + '</a>';
   }
 
   let html = blocoContrato(a) + '<h3 style="font-size:.95rem; margin-bottom:.7rem;">WhatsApp</h3><div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.4rem;">';
