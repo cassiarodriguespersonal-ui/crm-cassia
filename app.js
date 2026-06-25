@@ -999,6 +999,7 @@ function ligarModalAluna() {
       if (nomeAba === 'timeline') renderTabTimeline(ALUNA_ATUAL);
       if (nomeAba === 'financeiro') renderTabFinanceiro(ALUNA_ATUAL, gestaoDe(ALUNA_ATUAL));
       if (nomeAba === 'acoes') renderTabAcoes(ALUNA_ATUAL);
+      if (nomeAba === 'relatorio') renderTabRelatorio(ALUNA_ATUAL);
     });
   });
 }
@@ -1020,6 +1021,7 @@ function abrirModalAluna(aluna) {
   renderTabFotos(aluna);
   renderTabFinanceiro(aluna, g);
   renderTabAcoes(aluna);
+  renderTabRelatorio(aluna);
 
   const modalTabsEl = document.querySelector('.modal-tabs');
   if (modalTabsEl) modalTabsEl.scrollLeft = 0;
@@ -1606,6 +1608,206 @@ function renderTabFinanceiro(a, g) {
       renderAlunas();
     });
   });
+}
+
+
+/* ============================================================
+   RELATÓRIO PDF — montado na aba do perfil da aluna e impresso
+   via window.print() com CSS @media print dedicado.
+   ============================================================ */
+function renderTabRelatorio(a) {
+  var el = document.getElementById('tab-relatorio');
+  var g = gestaoDe(a);
+  var nome = a['Nome'] || '—';
+  var hoje = new Date().toLocaleDateString('pt-BR');
+
+  // ── Dados físicos (último check-in com peso + evolução) ──
+  var checkinsComPeso = (a.checkins || []).filter(function (c) { return c['Peso']; })
+    .slice().sort(function (x, y) { return new Date(x['Data/Hora']) - new Date(y['Data/Hora']); });
+  var ultimoPeso = checkinsComPeso.length ? checkinsComPeso[checkinsComPeso.length - 1] : null;
+  var primeiroPeso = checkinsComPeso.length ? checkinsComPeso[0] : null;
+
+  var pesoNum = ultimoPeso ? parseFloat(ultimoPeso['Peso']) : null;
+  var pesoAnteriorNum = (checkinsComPeso.length > 1) ? parseFloat(checkinsComPeso[checkinsComPeso.length - 2]['Peso']) : null;
+  var alturaNum = parseFloat(a['Altura (cm)']);
+  if (alturaNum && alturaNum < 3) alturaNum = alturaNum * 100;
+
+  function deltaCor(dif, inverso) {
+    if (dif === null) return '';
+    var bom = inverso ? dif > 0 : dif < 0;
+    return bom ? 'positivo' : 'negativo';
+  }
+  function deltaHtml(atual, anterior, unidade, inverso) {
+    if (atual === null || anterior === null) return '';
+    var dif = (atual - anterior).toFixed(1);
+    var sinal = dif > 0 ? '+' : '';
+    return '<div class="rel-delta ' + deltaCor(dif, inverso) + '">' + sinal + dif + ' ' + unidade + ' desde anterior</div>';
+  }
+
+  // IMC
+  var imcTxt = '—';
+  if (pesoNum && alturaNum) {
+    var imc = pesoNum / Math.pow(alturaNum / 100, 2);
+    var classe = imc < 18.5 ? 'Abaixo do peso' : imc < 25 ? 'Peso normal' : imc < 30 ? 'Sobrepeso' : 'Obesidade';
+    imcTxt = imc.toFixed(1) + ' (' + classe + ')';
+  }
+
+  // Variação total de peso
+  var variacaoPeso = '';
+  if (primeiroPeso && ultimoPeso && primeiroPeso !== ultimoPeso) {
+    var dif = (parseFloat(ultimoPeso['Peso']) - parseFloat(primeiroPeso['Peso'])).toFixed(1);
+    var sinal = dif > 0 ? '+' : '';
+    variacaoPeso = sinal + dif + ' kg desde o início (' + formatarData(primeiroPeso['Data/Hora']) + ')';
+  }
+
+  // Fotos (mais antigas e mais recentes)
+  var fotosLista = mesclarFotosPorDia(a.fotos || []).sort(function (x, y) { return new Date(x['Data/Hora']) - new Date(y['Data/Hora']); });
+  var fotoInicial = fotosLista.length ? fotosLista[0] : null;
+  var fotoAtual = fotosLista.length > 1 ? fotosLista[fotosLista.length - 1] : null;
+
+  // Últimos 5 check-ins
+  var ultCheckins = (a.checkins || []).slice().sort(function (x, y) { return new Date(y['Data/Hora']) - new Date(x['Data/Hora']); }).slice(0, 5);
+
+  // Notas pessoais
+  var notas = g.notas || '';
+
+  // ── Montar HTML da aba ──
+  var html = '';
+
+  // Botão imprimir (visível na tela, oculto na impressão)
+  html += '<div class="no-print-btn" style="margin-bottom:1rem;">' +
+    '<button class="btn btn-primary" id="btnImprimirRelatorio">🖨️ Imprimir / Salvar PDF</button>' +
+    '<span style="font-size:.8rem; color:var(--ink-soft); margin-left:.8rem;">Use "Salvar como PDF" na janela de impressão.</span>' +
+  '</div>';
+
+  // Preview do relatório (mesmo layout do que será impresso)
+  html += '<div id="preview-relatorio-interno" style="background:#fff; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; font-family:Georgia,serif;">';
+
+  // Cabeçalho
+  html += '<div style="background:#7C1B2A; color:#fff; padding:20px 24px; display:flex; justify-content:space-between; align-items:flex-end;">' +
+    '<div><div style="font-size:12px; opacity:.7; letter-spacing:.06em; text-transform:uppercase; margin-bottom:4px;">Consultoria Cássia Rodrigues</div>' +
+    '<div style="font-size:20px; font-weight:700;">' + nome + '</div></div>' +
+    '<div style="text-align:right; font-size:11px; opacity:.8;">' +
+      '<div style="text-transform:uppercase; letter-spacing:.06em;">Relatório de Evolução</div>' +
+      '<div style="margin-top:3px;">Emitido em ' + hoje + '</div>' +
+    '</div>' +
+  '</div>';
+
+  // Corpo
+  html += '<div style="padding:20px 24px;">';
+
+  // Dados do plano
+  html += '<div style="margin-bottom:16px; padding:14px 18px; border:1px solid #e0dbd6; border-radius:8px;">' +
+    '<div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#7C1B2A; margin-bottom:10px;">Plano & Objetivo</div>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">' +
+      '<div><div style="font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Plano</div><div style="font-weight:600;">' + (g.plano && g.plano !== '—' ? g.plano : '—') + '</div></div>' +
+      '<div><div style="font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Status</div><div style="font-weight:600;">' + (g.status || '—') + '</div></div>' +
+      '<div><div style="font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Objetivo</div><div style="font-weight:600; font-size:.88rem;">' + (a['Objetivo Principal'] || '—') + '</div></div>' +
+    '</div>' +
+  '</div>';
+
+  // Dados físicos
+  html += '<div style="margin-bottom:16px; padding:14px 18px; border:1px solid #e0dbd6; border-radius:8px;">' +
+    '<div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#7C1B2A; margin-bottom:10px;">Composição Física Atual</div>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">' +
+      '<div><div style="font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Peso</div>' +
+        '<div style="font-size:17px; font-weight:700;">' + (pesoNum ? pesoNum + ' kg' : '—') + '</div>' +
+        (pesoNum && pesoAnteriorNum ? deltaHtml(pesoNum, pesoAnteriorNum, 'kg', false) : '') +
+      '</div>' +
+      '<div><div style="font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">Altura</div>' +
+        '<div style="font-size:17px; font-weight:700;">' + (alturaNum ? alturaNum + ' cm' : '—') + '</div>' +
+      '</div>' +
+      '<div><div style="font-size:10px; color:#888; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px;">IMC</div>' +
+        '<div style="font-size:14px; font-weight:700;">' + imcTxt + '</div>' +
+      '</div>' +
+    '</div>' +
+    (variacaoPeso ? '<div style="margin-top:10px; font-size:.82rem; color:#7C1B2A; font-style:italic;">📈 ' + variacaoPeso + '</div>' : '') +
+  '</div>';
+
+  // Fotos antes/depois
+  if (fotoInicial || fotoAtual) {
+    html += '<div style="margin-bottom:16px; padding:14px 18px; border:1px solid #e0dbd6; border-radius:8px;">' +
+      '<div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#7C1B2A; margin-bottom:10px;">Fotos de Progresso</div>' +
+      '<div style="display:flex; gap:20px; flex-wrap:wrap;">';
+
+    function blocoFoto(foto, rotulo) {
+      if (!foto) return '';
+      var poses = [['Foto Frente','Frente'],['Foto Perfil','Perfil'],['Foto Costas','Costas']];
+      var imgs = '';
+      poses.forEach(function (p) {
+        var thumb = miniaturaDrive(foto[p[0]]);
+        if (!thumb) return;
+        imgs += '<div style="text-align:center;">' +
+          '<img src="' + thumb + '" style="width:100px; height:130px; object-fit:cover; border-radius:6px; border:1px solid #e0dbd6;" loading="lazy">' +
+          '<div style="font-size:9px; color:#888; margin-top:3px;">' + p[1] + '</div>' +
+        '</div>';
+      });
+      if (!imgs) return '';
+      return '<div>' +
+        '<div style="font-size:11px; font-weight:600; color:#555; margin-bottom:8px;">' + rotulo + ' · ' + formatarData(foto['Data/Hora']) + '</div>' +
+        '<div style="display:flex; gap:8px;">' + imgs + '</div>' +
+      '</div>';
+    }
+
+    html += blocoFoto(fotoInicial, 'Início');
+    if (fotoAtual) html += blocoFoto(fotoAtual, 'Atual');
+    html += '</div></div>';
+  }
+
+  // Últimos check-ins
+  if (ultCheckins.length) {
+    var emojiHumor = { 'Animada': '😊', 'Tranquila': '🙂', 'Cansada': '😮', 'Estressada': '😣', 'Desanimada': '😔' };
+    html += '<div style="margin-bottom:16px; padding:14px 18px; border:1px solid #e0dbd6; border-radius:8px;">' +
+      '<div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#7C1B2A; margin-bottom:10px;">Últimos Check-ins</div>' +
+      '<table style="width:100%; border-collapse:collapse; font-size:12px;">' +
+      '<thead><tr>' +
+        '<th style="text-align:left; padding:4px 6px; border-bottom:1px solid #e0dbd6; font-size:10px; text-transform:uppercase; color:#888; letter-spacing:.04em;">Data</th>' +
+        '<th style="text-align:left; padding:4px 6px; border-bottom:1px solid #e0dbd6; font-size:10px; text-transform:uppercase; color:#888; letter-spacing:.04em;">Peso</th>' +
+        '<th style="text-align:left; padding:4px 6px; border-bottom:1px solid #e0dbd6; font-size:10px; text-transform:uppercase; color:#888; letter-spacing:.04em;">Energia</th>' +
+        '<th style="text-align:left; padding:4px 6px; border-bottom:1px solid #e0dbd6; font-size:10px; text-transform:uppercase; color:#888; letter-spacing:.04em;">Humor</th>' +
+        '<th style="text-align:left; padding:4px 6px; border-bottom:1px solid #e0dbd6; font-size:10px; text-transform:uppercase; color:#888; letter-spacing:.04em;">Observação</th>' +
+      '</tr></thead><tbody>';
+    ultCheckins.forEach(function (c) {
+      html += '<tr>' +
+        '<td style="padding:5px 6px; border-bottom:1px solid #f0ece8;">' + formatarData(c['Data/Hora']) + '</td>' +
+        '<td style="padding:5px 6px; border-bottom:1px solid #f0ece8;">' + (c['Peso'] ? c['Peso'] + ' kg' : '—') + '</td>' +
+        '<td style="padding:5px 6px; border-bottom:1px solid #f0ece8;">' + (c['Energia'] != null ? c['Energia'] + '/10' : '—') + '</td>' +
+        '<td style="padding:5px 6px; border-bottom:1px solid #f0ece8;">' + (c['Humor'] ? (emojiHumor[c['Humor']] || '') + ' ' + c['Humor'] : '—') + '</td>' +
+        '<td style="padding:5px 6px; border-bottom:1px solid #f0ece8; font-size:11px;">' + (c['Observação'] || '—') + '</td>' +
+      '</tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  // Observações pessoais (notas)
+  if (notas) {
+    html += '<div style="margin-bottom:16px; padding:14px 18px; border:1px solid #e0dbd6; border-radius:8px;">' +
+      '<div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#7C1B2A; margin-bottom:8px;">Observações</div>' +
+      '<div style="font-size:13px; line-height:1.6; white-space:pre-wrap;">' + notas + '</div>' +
+    '</div>';
+  }
+
+  // Rodapé
+  html += '<div style="margin-top:24px; text-align:center; font-size:10px; color:#aaa; border-top:1px solid #e0dbd6; padding-top:12px;">' +
+    'Consultoria Cássia Rodrigues · CREF 020444-G/PA · cassiarodriguespersonal@gmail.com' +
+  '</div>';
+
+  html += '</div></div>'; // fecha padding + card
+
+  el.innerHTML = html;
+
+  // Evento do botão imprimir
+  var btnImprimir = document.getElementById('btnImprimirRelatorio');
+  if (btnImprimir) {
+    btnImprimir.addEventListener('click', function () {
+      // Copia o HTML do preview para o div de impressão e chama print()
+      var root = document.getElementById('print-relatorio-root');
+      root.innerHTML = document.getElementById('preview-relatorio-interno').innerHTML;
+      window.print();
+      // Limpa após impressão
+      setTimeout(function () { root.innerHTML = ''; }, 1000);
+    });
+  }
 }
 
 function renderTabAcoes(a) {

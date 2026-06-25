@@ -17,6 +17,51 @@
 <meta name="apple-mobile-web-app-title" content="CRM Cássia">
 
 <link rel="stylesheet" href="style.css">
+
+<style id="print-relatorio-style">
+@media print {
+  /* Esconde tudo */
+  body > * { display: none !important; }
+  /* Mostra só o conteúdo do relatório */
+  #print-relatorio-root { display: block !important; }
+
+  #print-relatorio-root {
+    font-family: 'Georgia', serif;
+    color: #1a1710;
+    padding: 0;
+    margin: 0;
+  }
+  #print-relatorio-root .rel-header {
+    background: #7C1B2A;
+    color: #fff;
+    padding: 24px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+  }
+  #print-relatorio-root .rel-header h1 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: .02em; }
+  #print-relatorio-root .rel-header .rel-meta { font-size: 11px; opacity: .8; text-align: right; }
+  #print-relatorio-root .rel-section { margin-bottom: 20px; padding: 16px 20px; border: 1px solid #e0dbd6; border-radius: 8px; page-break-inside: avoid; }
+  #print-relatorio-root .rel-section-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #7C1B2A; margin-bottom: 10px; }
+  #print-relatorio-root .rel-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  #print-relatorio-root .rel-item label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: .04em; display: block; margin-bottom: 2px; }
+  #print-relatorio-root .rel-item span { font-size: 15px; font-weight: 600; }
+  #print-relatorio-root .rel-item .rel-delta { font-size: 11px; margin-top: 2px; }
+  #print-relatorio-root .rel-delta.positivo { color: #2e7d5a; }
+  #print-relatorio-root .rel-delta.negativo { color: #b92b2b; }
+  #print-relatorio-root .rel-fotos { display: flex; gap: 16px; flex-wrap: wrap; }
+  #print-relatorio-root .rel-fotos img { width: 160px; height: 200px; object-fit: cover; border-radius: 6px; }
+  #print-relatorio-root .rel-fotos-caption { font-size: 10px; color: #888; margin-top: 4px; text-align: center; }
+  #print-relatorio-root .rel-checkins-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  #print-relatorio-root .rel-checkins-table th { border-bottom: 1px solid #e0dbd6; padding: 4px 6px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: #888; }
+  #print-relatorio-root .rel-checkins-table td { border-bottom: 1px solid #f0ece8; padding: 5px 6px; }
+  #print-relatorio-root .rel-footer { margin-top: 32px; text-align: center; font-size: 10px; color: #aaa; border-top: 1px solid #e0dbd6; padding-top: 12px; }
+  #print-relatorio-root .rel-obs { font-size: 13px; line-height: 1.6; white-space: pre-wrap; }
+  #print-relatorio-root .no-print-btn { display: none !important; }
+  @page { margin: 1.5cm; size: A4 portrait; }
+}
+</style>
 </head>
 <body>
 
@@ -376,6 +421,7 @@
       <div class="modal-tab" data-tab="fotos" style="flex-shrink:0; white-space:nowrap;">Fotos</div>
       <div class="modal-tab" data-tab="financeiro" style="flex-shrink:0; white-space:nowrap;">Financeiro</div>
       <div class="modal-tab" data-tab="acoes" style="flex-shrink:0; white-space:nowrap;">Ações</div>
+      <div class="modal-tab" data-tab="relatorio" style="flex-shrink:0; white-space:nowrap;">📄 Relatório PDF</div>
     </div>
     <div class="modal-body">
       <div class="tab-pane active" id="tab-resumo"></div>
@@ -387,6 +433,7 @@
       <div class="tab-pane" id="tab-fotos"></div>
       <div class="tab-pane" id="tab-financeiro"></div>
       <div class="tab-pane" id="tab-acoes"></div>
+      <div class="tab-pane" id="tab-relatorio"></div>
     </div>
   </div>
 </div>
@@ -446,5 +493,7 @@
     });
   }
 </script>
+
+<div id="print-relatorio-root" style="display:none;"></div>
 </body>
 </html>
