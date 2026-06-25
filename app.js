@@ -1459,7 +1459,32 @@ function renderTabFinanceiro(a, g) {
       '</div>' +
     '</div>' +
     '<button class="btn btn-primary" id="btnSalvarFinanceiro" style="margin-top:1rem;">Salvar</button> ' +
-    '<button class="btn btn-danger" id="btnExcluirAluna">Excluir aluna</button>';
+    '<button class="btn btn-danger" id="btnExcluirAluna">Excluir aluna</button>' +
+    (function () {
+      var historico = a.historicoPagamentos || [];
+      if (!historico.length) {
+        return '<div style="margin-top:1.6rem; padding-top:1.2rem; border-top:1px solid var(--line-soft);">' +
+          '<span class="eyebrow">Histórico de pagamentos</span>' +
+          '<p style="color:var(--ink-soft); font-size:.85rem; margin-top:.4rem;">Nenhum pagamento registrado ainda. O histórico começa a ser gravado a partir do próximo pagamento confirmado.</p>' +
+        '</div>';
+      }
+      var meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+      var linhas = historico.map(function (h) {
+        var mesAno = String(h['Mês/Ano'] || '');
+        var partes = mesAno.split('-');
+        var rotulo = partes.length === 2 ? (meses[parseInt(partes[1], 10) - 1] || partes[1]) + '/' + partes[0] : mesAno;
+        var dataReg = h['Data do Registro'] ? formatarData(h['Data do Registro']) : '—';
+        var status = String(h['Status'] || 'Pago');
+        var cor = status === 'Pago' ? 'var(--ok, #3E6650)' : '#C0392B';
+        return '<tr><td style="font-weight:600;">' + rotulo + '</td><td style="color:' + cor + '; font-weight:600;">' + status + '</td><td style="color:var(--ink-soft);">' + dataReg + '</td></tr>';
+      }).join('');
+      return '<div style="margin-top:1.6rem; padding-top:1.2rem; border-top:1px solid var(--line-soft);">' +
+        '<span class="eyebrow">Histórico de pagamentos</span>' +
+        '<div class="table-wrap" style="margin-top:.6rem;">' +
+          '<table class="data-table"><thead><tr><th>Mês</th><th>Status</th><th>Registrado em</th></tr></thead>' +
+          '<tbody>' + linhas + '</tbody></table>' +
+        '</div></div>';
+    }());
 
   renderChipsEtiquetas();
 
@@ -1516,6 +1541,17 @@ function renderTabFinanceiro(a, g) {
     Api.salvarGestaoAluna(dados).then(function () {
       a.gestao = dados;
       a['Data de Nascimento'] = dataNascimento;
+      // Adiciona ao histórico em memória para refletir imediatamente sem recarregar
+      if (dados.mesReferenciaPagamento) {
+        if (!a.historicoPagamentos) a.historicoPagamentos = [];
+        a.historicoPagamentos.unshift({
+          'Nome': a['Nome'],
+          'Mês/Ano': dados.mesReferenciaPagamento,
+          'Status': 'Pago',
+          'Data do Registro': new Date().toISOString()
+        });
+        renderTabFinanceiro(a, dados);
+      }
       mostrarToast('✓ Dados de ' + (a['Nome'].split(' ')[0]) + ' salvos!');
       // Atualiza a lista em segundo plano sem fechar o modal
       if (typeof renderAlunas === 'function') renderAlunas();
