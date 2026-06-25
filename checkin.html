@@ -299,10 +299,21 @@
   function renderizarConfirmacao(){
     document.getElementById('titulo').textContent = 'Check-in enviado';
     document.getElementById('subtitulo').textContent = '';
+
+    var msgFotos = '';
+    if (tipoCheckin === 'Mensal' || tipoCheckin === 'Trimestral') {
+      var linkFotos = 'https://cassiarodriguespersonal-ui.github.io/crm-cassia/fotos.html?nome=' + encodeURIComponent(nome);
+      msgFotos = '<div style="margin-top:1.4rem; padding:1rem 1.2rem; background:#F7F4F2; border-radius:12px; text-align:center;">' +
+        '<p style="font-size:.9rem; color:#3E3A36; margin:0 0 .8rem;">Seu check-in ' + tipoCheckin.toLowerCase() + ' inclui fotos de progresso. Aproveite e envie agora! 📸</p>' +
+        '<a href="' + linkFotos + '" style="display:inline-block; background:#7C1B2A; color:#fff; font-weight:700; font-size:.88rem; padding:.65rem 1.4rem; border-radius:999px; text-decoration:none;">Enviar fotos agora</a>' +
+      '</div>';
+    }
+
     document.getElementById('corpo').innerHTML =
       '<div class="estado-aceito">' +
         '<div class="selo">✓</div>' +
         '<p>Recebido, ' + primeiroNome(nome) + '! Cássia já vai dar uma olhada. Até o próximo check-in. 💪</p>' +
+        msgFotos +
       '</div>';
   }
 

@@ -1232,20 +1232,38 @@ function renderTabCheckins(a) {
   const lista = a.checkins || [];
   if (!lista.length) { el.innerHTML = '<p style="color:var(--ink-soft);">Nenhum check-in registrado ainda.</p>'; return; }
 
-  function linhaTabela(c) {
+  // Para cada check-in mensal/trimestral, verifica se há foto enviada próxima (janela de 7 dias)
+  function fotoProxima(dataCheckin) {
+    const dtCk = new Date(dataCheckin);
+    if (isNaN(dtCk.getTime())) return false;
+    return (a.fotos || []).some(function (f) {
+      const dtFoto = new Date(f['Data/Hora']);
+      if (isNaN(dtFoto.getTime())) return false;
+      return Math.abs(dtFoto - dtCk) <= 7 * 86400000;
+    });
+  }
+
+  function linhaTabela(c, comFotos) {
     const emojiHumor = { 'Animada': '😊', 'Tranquila': '🙂', 'Cansada': '😮\u200d💨', 'Estressada': '😣', 'Desanimada': '😔' };
-    return '<tr><td>' + formatarDataHora(c['Data/Hora']) + '</td><td>' + (c['Peso'] || '—') + '</td><td>' + (c['Semana'] || '—') + '</td><td>' + (c['Energia'] ?? '—') + '/10</td><td>' + (c['Humor'] ? (emojiHumor[c['Humor']] || '') + ' ' + c['Humor'] : '—') + '</td><td>' + (c['Dor'] === 'Sim' ? '⚠ ' + (c['Onde a Dor'] || 'sim') : 'Não') + '</td><td>' + (c['Maior Dificuldade'] || '—') + '</td><td>' + (c['Observação'] || '—') + '</td></tr>';
+    const seloFoto = comFotos
+      ? (fotoProxima(c['Data/Hora'])
+          ? '<span title="Fotos enviadas neste período" style="color:var(--ok,#3E6650);">📸 ✓</span>'
+          : '<span title="Fotos não enviadas neste período" style="color:var(--ink-faint);">📸 —</span>')
+      : '';
+    return '<tr><td>' + formatarDataHora(c['Data/Hora']) + '</td><td>' + (c['Peso'] || '—') + '</td><td>' + (c['Semana'] || '—') + '</td><td>' + (c['Energia'] ?? '—') + '/10</td><td>' + (c['Humor'] ? (emojiHumor[c['Humor']] || '') + ' ' + c['Humor'] : '—') + '</td><td>' + (c['Dor'] === 'Sim' ? '⚠ ' + (c['Onde a Dor'] || 'sim') : 'Não') + '</td><td>' + (c['Maior Dificuldade'] || '—') + '</td><td>' + (c['Observação'] || '—') + '</td>' + (comFotos ? '<td>' + seloFoto + '</td>' : '') + '</tr>';
   }
 
   function blocoTipo(tipo, emoji) {
     const doTipo = lista.filter(function (c) { return (c['Tipo'] || 'Semanal') === tipo; });
+    const comFotos = tipo === 'Mensal' || tipo === 'Trimestral';
     if (!doTipo.length) {
       return '<div style="margin-bottom:1.6rem;"><span class="eyebrow">' + emoji + ' ' + tipo + '</span><p style="color:var(--ink-faint); font-size:.84rem;">Nenhum check-in ' + tipo.toLowerCase() + ' ainda.</p></div>';
     }
+    const thFotos = comFotos ? '<th>Fotos</th>' : '';
     return '<div style="margin-bottom:1.6rem;">' +
       '<span class="eyebrow">' + emoji + ' ' + tipo + ' · ' + doTipo.length + '</span>' +
-      '<div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Peso</th><th>Avaliação</th><th>Energia</th><th>Humor</th><th>Dor</th><th>Dificuldade</th><th>Observação</th></tr></thead><tbody>' +
-      doTipo.map(linhaTabela).join('') +
+      '<div class="table-wrap"><table class="data-table"><thead><tr><th>Data</th><th>Peso</th><th>Avaliação</th><th>Energia</th><th>Humor</th><th>Dor</th><th>Dificuldade</th><th>Observação</th>' + thFotos + '</tr></thead><tbody>' +
+      doTipo.map(function (c) { return linhaTabela(c, comFotos); }).join('') +
       '</tbody></table></div></div>';
   }
 
@@ -1599,7 +1617,13 @@ function renderTabAcoes(a) {
   } else {
     html += botaoWhats('Boas-vindas', CONFIG.modelosWhatsapp.boasVindas);
     html += botaoWhats('Lembrete semanal', CONFIG.modelosWhatsapp.lembreteSemanal + linkCheckinPara(nome));
-    html += botaoWhats('Pedir check-in', CONFIG.modelosWhatsapp.solicitarCheckin + linkCheckinPara(nome));
+    // Check-in com tipo pré-selecionado — mensal e trimestral incluem pedido de fotos na mesma mensagem
+    html += '<div style="width:100%; display:flex; align-items:center; gap:.5rem; margin:.3rem 0 .1rem; flex-wrap:wrap;">' +
+      '<span style="font-size:.75rem; color:var(--ink-faint); white-space:nowrap;">Check-in:</span>' +
+      botaoWhats('📅 Semanal', CONFIG.modelosWhatsapp.solicitarCheckin + linkCheckinPara(nome) + '&tipo=' + encodeURIComponent('Semanal')) +
+      botaoWhats('🗓️ Mensal', CONFIG.modelosWhatsapp.solicitarCheckin + linkCheckinPara(nome) + '&tipo=' + encodeURIComponent('Mensal') + '\n\nE para completar sua avaliação mensal, atualize também suas fotos de progresso: ' + CONFIG.linkGuiaFotos + '?nome=' + encodeURIComponent(nome)) +
+      botaoWhats('📆 Trimestral', CONFIG.modelosWhatsapp.solicitarCheckin + linkCheckinPara(nome) + '&tipo=' + encodeURIComponent('Trimestral') + '\n\nE para completar sua avaliação trimestral, atualize também suas fotos de progresso: ' + CONFIG.linkGuiaFotos + '?nome=' + encodeURIComponent(nome)) +
+    '</div>';
     html += botaoWhats('Pedir fotos', CONFIG.modelosWhatsapp.solicitarFotos + CONFIG.linkGuiaFotos);
     html += botaoWhats('Lembrete de pagamento', CONFIG.modelosWhatsapp.lembretePagamento);
     html += botaoWhats('Motivação', CONFIG.modelosWhatsapp.motivacao);
