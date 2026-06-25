@@ -871,9 +871,20 @@ function renderAlunas() {
   let filtradas = ALUNAS.filter(function (a) {
     const g = gestaoDe(a);
     const etiquetas = etiquetasDe(a);
-    // Busca ampliada: nome, telefone, e-mail, cidade/estado, profissão, ID e etiquetas — não só nome.
+    // Busca ampliada: ficha, etiquetas, check-ins, interações, fotos e anotações.
+    const textosCheckins = (a.checkins || []).flatMap(function (c) {
+      return [c['Observação'], c['Maior Dificuldade'], c['Onde a Dor'], c['Humor'], c['Semana']];
+    });
+    const textosInteracoes = (a.interacoes || []).flatMap(function (i) {
+      return [i['Observação'], i['Tipo']];
+    });
+    const textosNotas = [gestaoDe(a).notas];
     const camposBusca = [a['Nome'], a['Telefone'], a['E-mail'], a['Cidade/Estado'], a['Profissão'], a['ID']]
-      .concat(etiquetas).filter(Boolean).join(' ').toLowerCase();
+      .concat(etiquetas)
+      .concat(textosCheckins)
+      .concat(textosInteracoes)
+      .concat(textosNotas)
+      .filter(Boolean).join(' ').toLowerCase();
     const bateBusca = !termo || camposBusca.indexOf(termo) !== -1;
     const bateStatus = statusFiltro === 'todos' || g.status === statusFiltro;
     const bateArquivado = mostrarArquivadas || g.arquivado !== 'Sim';
