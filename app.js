@@ -1471,13 +1471,18 @@ function renderTabAcoes(a) {
   const whats = telefoneParaWhats(a['Telefone']);
   const nome = a['Nome'] || '';
 
+  // Botão WhatsApp — abre conversa e mostra toast idêntico ao das Ferramentas
   function botaoWhats(label, textoBruto) {
     const texto = textoBruto.replace(/\{nome\}/g, primeiroNome(nome));
-    return '<a class="btn btn-sm" target="_blank" href="https://wa.me/' + whats + '?text=' + encodeURIComponent(texto) + '">' + label + '</a>';
+    const url = 'https://wa.me/' + whats + '?text=' + encodeURIComponent(texto);
+    return '<button class="btn btn-sm btn-accent" onclick="window.open(\'' + url.replace(/'/g, "\\'") + '\',\'_blank\'); mostrarToast(\'💬 WhatsApp aberto para ' + primeiroNome(nome).replace(/'/g, "\\'") + '!\');">' + label + '</button>';
   }
+
+  // Botão E-mail — abre cliente de e-mail e mostra toast igual ao do WhatsApp
   function botaoEmail(label, assunto, corpoBruto) {
     const corpo = corpoBruto.replace(/\{nome\}/g, nome);
-    return '<a class="btn btn-sm" href="mailto:' + (a['E-mail'] || '') + '?subject=' + encodeURIComponent(assunto) + '&body=' + encodeURIComponent(corpo) + '">' + label + '</a>';
+    const url = 'mailto:' + (a['E-mail'] || '') + '?subject=' + encodeURIComponent(assunto) + '&body=' + encodeURIComponent(corpo);
+    return '<button class="btn btn-sm btn-accent" onclick="window.location.href=\'' + url.replace(/'/g, "\\'") + '\'; mostrarToast(\'✉️ E-mail aberto para ' + primeiroNome(nome).replace(/'/g, "\\'") + '!\');">' + label + '</button>';
   }
 
   let html = blocoContrato(a) + '<h3 style="font-size:.95rem; margin-bottom:.7rem;">WhatsApp</h3><div style="display:flex; gap:.5rem; flex-wrap:wrap; margin-bottom:1.4rem;">';
