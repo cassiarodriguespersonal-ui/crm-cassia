@@ -1035,8 +1035,7 @@ function ligarModalAluna() {
       // Re-renderiza abas pesadas só quando ativadas
       if (!ALUNA_ATUAL) return;
       const nomeAba = tab.getAttribute('data-tab');
-      if (nomeAba === 'fotos') renderTabFotos(ALUNA_ATUAL);
-      if (nomeAba === 'evolucao') renderTabEvolucao(ALUNA_ATUAL);
+      if (nomeAba === 'progresso') { renderTabEvolucao(ALUNA_ATUAL); renderTabFotos(ALUNA_ATUAL); }
       if (nomeAba === 'checkins') renderTabCheckins(ALUNA_ATUAL);
       if (nomeAba === 'timeline') renderTabTimeline(ALUNA_ATUAL);
       if (nomeAba === 'financeiro') renderTabFinanceiro(ALUNA_ATUAL, gestaoDe(ALUNA_ATUAL));
@@ -1144,20 +1143,7 @@ function renderTabOnboarding(a) {
         '<div style="font-size:.88rem; color:' + (p.feito ? 'var(--ink)' : 'var(--ink-soft)') + ';">' + p.label + '</div>' +
       '</div>';
     }).join('') +
-    (ob.completo
-      ? '<p style="margin-top:1rem; color:var(--ok); font-weight:600; font-size:.88rem;">🎉 Onboarding completo!</p>'
-      : (function () {
-          const acoes = [];
-          if (!ob.passos[0].feito) acoes.push({ label: '📋 Copiar link da ficha', url: CONFIG.linkFicha });
-          if (!ob.passos[1].feito) acoes.push({ label: '📄 Copiar link do contrato', url: CONFIG.linkContrato });
-          if (!ob.passos[3].feito) acoes.push({ label: '📸 Copiar link de fotos', url: CONFIG.linkGuiaFotos });
-          if (!acoes.length) return '';
-          return '<div style="margin-top:1.2rem; display:flex; flex-wrap:wrap; gap:.5rem;">' +
-            acoes.map(function (acao) {
-              return '<button class="btn btn-sm btn-accent" onclick="navigator.clipboard.writeText(\'' + acao.url + '\').then(function(){ mostrarToast(\'Link copiado!\'); })">' + acao.label + '</button>';
-            }).join('') +
-          '</div>';
-        })());
+    (ob.completo ? '<p style="margin-top:1rem; color:var(--ok); font-weight:600; font-size:.88rem;">🎉 Onboarding completo!</p>' : '');
 }
 
 function renderTabTimeline(a) {
@@ -1375,9 +1361,10 @@ function gerarGraficoLinhaSVG(pontos) {
 }
 
 function renderTabEvolucao(a) {
-  const el = document.getElementById('tab-evolucao');
+  const el = document.getElementById('tab-progresso');
+  el.innerHTML = '<span class="eyebrow">Evolução de peso</span>';
   const comPeso = (a.checkins || []).filter(function (c) { return c['Peso']; }).slice().reverse(); // ordem cronológica
-  if (!comPeso.length) { el.innerHTML = '<p style="color:var(--ink-soft);">Ainda não há registros de peso suficientes para mostrar evolução.</p>'; return; }
+  if (!comPeso.length) { el.innerHTML += '<p style="color:var(--ink-soft);">Ainda não há registros de peso suficientes para mostrar evolução.</p>'; return; }
   const primeiro = parseFloat(comPeso[0]['Peso']);
   const ultimo = parseFloat(comPeso[comPeso.length - 1]['Peso']);
   const diferenca = (ultimo - primeiro).toFixed(1);
@@ -1395,10 +1382,7 @@ function renderTabEvolucao(a) {
     comPeso.slice().reverse().map(function (c) { return '<tr><td>' + formatarData(c['Data/Hora']) + '</td><td>' + c['Peso'] + '</td></tr>'; }).join('') +
     '</tbody></table></div>';
 
-  el.innerHTML = html;
-}
-
-function extrairIdDrive(url) {
+  el.innerHTML += html;
   if (!url || url === '—') return null;
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   return m ? m[1] : null;
@@ -1437,16 +1421,17 @@ function mesclarFotosPorDia(fotos) {
 }
 
 function renderTabFotos(a) {
-  const el = document.getElementById('tab-fotos');
+  const el = document.getElementById('tab-progresso');
   const lista = mesclarFotosPorDia(a.fotos || []).sort(function (x, y) { return new Date(y['Data/Hora']) - new Date(x['Data/Hora']); });
-  if (!lista.length) { el.innerHTML = '<p style="color:var(--ink-soft);">Nenhuma foto enviada ainda.</p>'; return; }
+  const separador = '<hr style="border:none; border-top:1px solid var(--line); margin:1.6rem 0;">';
+  if (!lista.length) { el.innerHTML += separador + '<p style="color:var(--ink-soft);">Nenhuma foto enviada ainda.</p>'; return; }
 
   const cronologica = lista.slice().reverse(); // mais antiga primeiro, para a comparação
   const opcoesData = cronologica.map(function (f, i) {
     return '<option value="' + i + '">' + formatarData(f['Data/Hora']) + '</option>';
   }).join('');
 
-  let html = '';
+  let html = separador + '<span class="eyebrow">Fotos</span>';
   if (cronologica.length >= 2) {
     html += '<div style="margin-bottom:1.8rem; padding-bottom:1.6rem; border-bottom:1px solid var(--line);">' +
       '<span class="eyebrow">Comparar</span><h3 style="font-size:.95rem; margin-bottom:.8rem;">Antes e depois</h3>' +
@@ -1472,7 +1457,7 @@ function renderTabFotos(a) {
     return '<div class="foto-data-bloco"><div class="data-foto">' + formatarData(f['Data/Hora']) + '</div><div class="foto-thumbs-row">' + (imgs || '<span style="color:var(--ink-soft); font-size:.78rem;">Sem imagem visível (enviada antes do ajuste de compartilhamento)</span>') + '</div></div>';
   }).join('') + '</div>';
 
-  el.innerHTML = html;
+  el.innerHTML += html;
 
   if (cronologica.length >= 2) {
     function montarComparacao() {
