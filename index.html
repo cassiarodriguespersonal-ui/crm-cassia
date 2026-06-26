@@ -74,10 +74,10 @@
     </div>
     <nav class="sidebar-nav" id="sidebarNav">
       <div class="nav-item active" data-section="dashboard"><span class="emoji">🏠</span> Dashboard</div>
-      <div class="nav-item" data-section="alunas"><span class="emoji">👩‍🎓</span> Gestão de alunos</div>
+      <div class="nav-item" data-section="alunas"><span class="emoji">👩‍🎓</span> Alunos</div>
       <div class="nav-item" data-section="checkins"><span class="emoji">📅</span> Check-ins</div>
       <div class="nav-item" data-section="financeiro"><span class="emoji">💳</span> Financeiro</div>
-      <div class="nav-item" data-section="ferramentas"><span class="emoji">🧰</span> Ferramentas</div>
+      <div class="nav-item" data-section="ferramentas"><span class="emoji">🧰</span> Comunicação</div>
       <div class="nav-item" data-section="automacoes"><span class="emoji">🤖</span> Automações</div>
       <div class="nav-item em-breve" data-section="treinos"><span class="emoji">🏋️</span> Treinos <span class="tag-breve">em breve</span></div>
       <div class="nav-item em-breve" data-section="materiais"><span class="emoji">📚</span> Materiais <span class="tag-breve">em breve</span></div>
@@ -179,6 +179,12 @@
           <button class="btn btn-accent" id="btnNovaAluna">+ Nova aluna</button>
         </div>
         <div id="listaAlunas"></div>
+        <div style="margin-top:.6rem; font-size:.72rem; color:var(--ink-faint); display:flex; gap:1rem; flex-wrap:wrap; padding:.2rem 0;">
+          <span>🟢 Sem pendências</span>
+          <span>🟡 Atenção</span>
+          <span>🟠 Em risco</span>
+          <span>🔴 Crítico</span>
+        </div>
       </section>
 
       <!-- CHECK-INS -->
@@ -437,27 +443,25 @@
       <button class="modal-close" id="btnFecharModal">✕</button>
     </div>
     <div class="modal-tabs" style="overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch;">
-      <div class="modal-tab active" data-tab="resumo" style="flex-shrink:0; white-space:nowrap;">Resumo da anamnese</div>
-      <div class="modal-tab" data-tab="onboarding" style="flex-shrink:0; white-space:nowrap;">Onboarding</div>
-      <div class="modal-tab" data-tab="timeline" style="flex-shrink:0; white-space:nowrap;">Timeline</div>
-      <div class="modal-tab" data-tab="interacoes" style="flex-shrink:0; white-space:nowrap;">Interações</div>
-      <div class="modal-tab" data-tab="checkins" style="flex-shrink:0; white-space:nowrap;">Check-ins</div>
-      <div class="modal-tab" data-tab="evolucao" style="flex-shrink:0; white-space:nowrap;">Evolução</div>
-      <div class="modal-tab" data-tab="fotos" style="flex-shrink:0; white-space:nowrap;">Fotos</div>
-      <div class="modal-tab" data-tab="financeiro" style="flex-shrink:0; white-space:nowrap;">Financeiro</div>
+      <div class="modal-tab active" data-tab="resumo" style="flex-shrink:0; white-space:nowrap;">Resumo</div>
       <div class="modal-tab" data-tab="acoes" style="flex-shrink:0; white-space:nowrap;">Ações</div>
+      <div class="modal-tab" data-tab="onboarding" style="flex-shrink:0; white-space:nowrap;">Onboarding</div>
+      <div class="modal-tab" data-tab="checkins" style="flex-shrink:0; white-space:nowrap;">Check-ins</div>
+      <div class="modal-tab" data-tab="progresso" style="flex-shrink:0; white-space:nowrap;">Progresso</div>
+      <div class="modal-tab" data-tab="interacoes" style="flex-shrink:0; white-space:nowrap;">Interações</div>
+      <div class="modal-tab" data-tab="timeline" style="flex-shrink:0; white-space:nowrap;">Timeline</div>
+      <div class="modal-tab" data-tab="financeiro" style="flex-shrink:0; white-space:nowrap;">Financeiro</div>
       <div class="modal-tab" data-tab="relatorio" style="flex-shrink:0; white-space:nowrap;">📄 Relatório PDF</div>
     </div>
     <div class="modal-body">
       <div class="tab-pane active" id="tab-resumo"></div>
-      <div class="tab-pane" id="tab-onboarding"></div>
-      <div class="tab-pane" id="tab-timeline"></div>
-      <div class="tab-pane" id="tab-interacoes"></div>
-      <div class="tab-pane" id="tab-checkins"></div>
-      <div class="tab-pane" id="tab-evolucao"></div>
-      <div class="tab-pane" id="tab-fotos"></div>
-      <div class="tab-pane" id="tab-financeiro"></div>
       <div class="tab-pane" id="tab-acoes"></div>
+      <div class="tab-pane" id="tab-onboarding"></div>
+      <div class="tab-pane" id="tab-checkins"></div>
+      <div class="tab-pane" id="tab-progresso"></div>
+      <div class="tab-pane" id="tab-interacoes"></div>
+      <div class="tab-pane" id="tab-timeline"></div>
+      <div class="tab-pane" id="tab-financeiro"></div>
       <div class="tab-pane" id="tab-relatorio"></div>
     </div>
   </div>
@@ -500,7 +504,7 @@
   <div class="bottom-nav-item active" data-section="dashboard"><span class="bn-icon">🏠</span><span>Início</span></div>
   <div class="bottom-nav-item" data-section="alunas"><span class="bn-icon">👩‍🎓</span><span>Alunos</span></div>
   <div class="bottom-nav-item" data-section="checkins"><span class="bn-icon">📅</span><span>Check-ins</span></div>
-  <div class="bottom-nav-item" data-section="ferramentas"><span class="bn-icon">🧰</span><span>Ferramentas</span></div>
+  <div class="bottom-nav-item" data-section="ferramentas"><span class="bn-icon">🧰</span><span>Comunicação</span></div>
   <div class="bottom-nav-item" id="bottomNavMais"><span class="bn-icon">☰</span><span>Mais</span></div>
 </nav>
 
