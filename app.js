@@ -1389,6 +1389,9 @@ function renderTabEvolucao(a) {
     '</tbody></table></div>';
 
   el.innerHTML += html;
+}
+
+function extrairIdDrive(url) {
   if (!url || url === '—') return null;
   const m = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
   return m ? m[1] : null;
