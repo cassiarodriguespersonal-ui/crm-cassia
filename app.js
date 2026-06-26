@@ -1035,7 +1035,7 @@ function ligarModalAluna() {
       // Re-renderiza abas pesadas só quando ativadas
       if (!ALUNA_ATUAL) return;
       const nomeAba = tab.getAttribute('data-tab');
-      if (nomeAba === 'progresso') { renderTabEvolucao(ALUNA_ATUAL); renderTabFotos(ALUNA_ATUAL); }
+      if (nomeAba === 'progresso') { renderTabProgresso(ALUNA_ATUAL); }
       if (nomeAba === 'checkins') renderTabCheckins(ALUNA_ATUAL);
       if (nomeAba === 'timeline') renderTabTimeline(ALUNA_ATUAL);
       if (nomeAba === 'financeiro') renderTabFinanceiro(ALUNA_ATUAL, gestaoDe(ALUNA_ATUAL));
@@ -1058,11 +1058,9 @@ function abrirModalAluna(aluna) {
   renderTabTimeline(aluna);
   renderTabInteracoes(aluna);
   renderTabCheckins(aluna);
-  renderTabEvolucao(aluna);
-  renderTabFotos(aluna);
+  renderTabProgresso(aluna);
   renderTabFinanceiro(aluna, g);
   renderTabAcoes(aluna);
-  renderTabRelatorio(aluna);
 
   const modalTabsEl = document.querySelector('.modal-tabs');
   if (modalTabsEl) modalTabsEl.scrollLeft = 0;
@@ -1358,6 +1356,14 @@ function gerarGraficoLinhaSVG(pontos) {
     '<path d="' + linha + '" fill="none" stroke="#7C1B2A" stroke-width="2.2"></path>' +
     pontosSvg + rotuloEsq + rotuloDir +
   '</svg>';
+}
+
+function renderTabProgresso(a) {
+  const el = document.getElementById('tab-progresso');
+  if (!el) return;
+  el.innerHTML = '';
+  renderTabEvolucao(a);
+  renderTabFotos(a);
 }
 
 function renderTabEvolucao(a) {
