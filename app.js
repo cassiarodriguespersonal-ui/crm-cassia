@@ -60,10 +60,10 @@ function ligarNavegacao() {
 
 const TITULOS_SECAO = {
   dashboard: ['Dashboard', 'Visão geral da consultoria'],
-  alunas: ['Alunos', 'Todas as alunas, fichas e cadastros manuais'],
-  checkins: ['Check-ins', 'Visão geral e envio em lote'],
+  alunas: ['Gestão de alunos', 'Todas as alunas, fichas e cadastros manuais'],
+  checkins: ['Check-ins', 'Envio e histórico de check-ins'],
   financeiro: ['Financeiro', 'Pagamentos, planos e renovações'],
-  ferramentas: ['Comunicação', 'Atalhos, modelos e envio de mensagens'],
+  ferramentas: ['Ferramentas', 'Atalhos, modelos e envio de mensagens'],
   automacoes: ['Automações', 'Regras automáticas e gatilhos prontos para enviar'],
   treinos: ['Treinos', 'Em construção'],
   materiais: ['Materiais', 'Em construção'],
@@ -1144,7 +1144,20 @@ function renderTabOnboarding(a) {
         '<div style="font-size:.88rem; color:' + (p.feito ? 'var(--ink)' : 'var(--ink-soft)') + ';">' + p.label + '</div>' +
       '</div>';
     }).join('') +
-    (ob.completo ? '<p style="margin-top:1rem; color:var(--ok); font-weight:600; font-size:.88rem;">🎉 Onboarding completo!</p>' : '');
+    (ob.completo
+      ? '<p style="margin-top:1rem; color:var(--ok); font-weight:600; font-size:.88rem;">🎉 Onboarding completo!</p>'
+      : (function () {
+          const acoes = [];
+          if (!ob.passos[0].feito) acoes.push({ label: '📋 Copiar link da ficha', url: CONFIG.linkFicha });
+          if (!ob.passos[1].feito) acoes.push({ label: '📄 Copiar link do contrato', url: CONFIG.linkContrato });
+          if (!ob.passos[3].feito) acoes.push({ label: '📸 Copiar link de fotos', url: CONFIG.linkGuiaFotos });
+          if (!acoes.length) return '';
+          return '<div style="margin-top:1.2rem; display:flex; flex-wrap:wrap; gap:.5rem;">' +
+            acoes.map(function (acao) {
+              return '<button class="btn btn-sm btn-accent" onclick="navigator.clipboard.writeText(\'' + acao.url + '\').then(function(){ mostrarToast(\'Link copiado!\'); })">' + acao.label + '</button>';
+            }).join('') +
+          '</div>';
+        })());
 }
 
 function renderTabTimeline(a) {
